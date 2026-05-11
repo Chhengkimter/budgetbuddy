@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Budget Buddy — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body>
+
+<!-- ============================================================
+     TOP NAVBAR
+     ============================================================ -->
+<nav class="navbar">
+    <div class="navbar__logo">
+        <div class="navbar__logo-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0
+                       1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12
+                       c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182
+                       s2.9-.879 4.006 0l.415.33"/>
+            </svg>
+        </div>
+        <span class="navbar__logo-name">Budget Buddy</span>
+    </div>
+
+    <div class="navbar__links">
+        <a class="nav__link active" href="dashboard.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+            Dashboard
+        </a>
+        <a class="nav__link" href="transactions.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
+        <a class="nav__link" href="budget.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2
+                       a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10
+                       m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2
+                       a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Budget
+        </a>
+        <a class="nav__link" href="goals.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12
+                       l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Goals
+        </a>
+    </div>
+
+    <div class="navbar__right">
+        <span class="navbar__period">April 2026</span>
+        <button class="btn-add" onclick="openModal()">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Transaction
+        </button>
+        <div class="navbar__avatar">MK</div>
+    </div>
+</nav>
+
+
+<!-- ============================================================
+     PAGE — fills entire remaining screen width
+     ============================================================ -->
+<main class="page">
+
+    <!-- Greeting -->
+    <div class="greeting">
+        <h2 class="greeting__title">Good morning, Monika! 👋</h2>
+        <p class="greeting__sub">April 2026 overview</p>
+    </div>
+
+    <!-- ── STAT CARDS ROW ── -->
+    <div class="stats-row">
+
+        <div class="balance-card">
+            <div>
+                <div class="balance-card__label">Total Balance</div>
+                <div class="balance-card__amount">$250,000</div>
+            </div>
+            <div class="balance-card__chip">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                +12.4% vs last month
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Total Income</span>
+                <div class="stat-card__icon" style="background:var(--green-lt);">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="#16A34A" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343
+                               2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1
+                               m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card__amount" style="color:var(--green);">$2,300</div>
+            <div class="stat-card__sub">this month</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Total Spend</span>
+                <div class="stat-card__icon" style="background:var(--red-lt);">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card__amount" style="color:var(--red);">$750</div>
+            <div class="stat-card__sub">43.5% of income</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Net Saving</span>
+                <div class="stat-card__icon" style="background:var(--blue-lt);">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="#2563EB" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2
+                               4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2
+                               0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card__amount" style="color:var(--blue);">$1,500</div>
+            <div class="stat-card__sub">this month</div>
+        </div>
+
+    </div><!-- /stats-row -->
+
+
+    <!-- ── CHARTS ROW ── -->
+    <div class="charts-row">
+
+        <!-- Spending by category -->
+        <div class="card">
+            <div class="card__hdr">
+                <span class="card__title">Spending by category</span>
+            </div>
+            <div class="spending__body">
+                <div class="donut-wrap">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#EEF2FA" stroke-width="14"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#EF4444" stroke-width="14"
+                            stroke-dasharray="95.5 143.3" stroke-dashoffset="0"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#8B5CF6" stroke-width="14"
+                            stroke-dasharray="57.3 181.5" stroke-dashoffset="-95.5"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#3B82F6" stroke-width="14"
+                            stroke-dasharray="47.8 191" stroke-dashoffset="-152.8"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#F59E0B" stroke-width="14"
+                            stroke-dasharray="38.2 200.6" stroke-dashoffset="-200.6"/>
+                    </svg>
+                    <div class="donut-center">
+                        <span class="donut-center__val">$750</span>
+                        <span class="donut-center__lbl">Total</span>
+                    </div>
+                </div>
+
+                <div class="cat-list">
+                    <div class="cat-row">
+                        <div class="cat-row__dot" style="background:#EF4444;"></div>
+                        <span class="cat-row__name">Food</span>
+                        <div class="cat-row__bar-wrap"><div class="cat-row__bar" style="width:40%;background:#EF4444;"></div></div>
+                        <span class="cat-row__pct">40%</span>
+                    </div>
+                    <div class="cat-row">
+                        <div class="cat-row__dot" style="background:#8B5CF6;"></div>
+                        <span class="cat-row__name">Transportation</span>
+                        <div class="cat-row__bar-wrap"><div class="cat-row__bar" style="width:24%;background:#8B5CF6;"></div></div>
+                        <span class="cat-row__pct">24%</span>
+                    </div>
+                    <div class="cat-row">
+                        <div class="cat-row__dot" style="background:#3B82F6;"></div>
+                        <span class="cat-row__name">Housing</span>
+                        <div class="cat-row__bar-wrap"><div class="cat-row__bar" style="width:20%;background:#3B82F6;"></div></div>
+                        <span class="cat-row__pct">20%</span>
+                    </div>
+                    <div class="cat-row">
+                        <div class="cat-row__dot" style="background:#F59E0B;"></div>
+                        <span class="cat-row__name">Entertainment</span>
+                        <div class="cat-row__bar-wrap"><div class="cat-row__bar" style="width:16%;background:#F59E0B;"></div></div>
+                        <span class="cat-row__pct">16%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly trend -->
+        <div class="card">
+            <div class="card__hdr">
+                <span class="card__title">Monthly trend</span>
+            </div>
+            <div class="bar-chart">
+                <div class="bar-col">
+                    <div class="bar-col__pair">
+                        <div class="bar-seg" style="height:70px;background:var(--primary);opacity:0.4;"></div>
+                        <div class="bar-seg" style="height:50px;background:#22C55E;"></div>
+                    </div>
+                    <span class="bar-col__label">Jan</span>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-col__pair">
+                        <div class="bar-seg" style="height:54px;background:var(--primary);opacity:0.4;"></div>
+                        <div class="bar-seg" style="height:80px;background:#22C55E;"></div>
+                    </div>
+                    <span class="bar-col__label">Feb</span>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-col__pair">
+                        <div class="bar-seg" style="height:86px;background:var(--primary);opacity:0.4;"></div>
+                        <div class="bar-seg" style="height:60px;background:#22C55E;"></div>
+                    </div>
+                    <span class="bar-col__label">Mar</span>
+                </div>
+                <div class="bar-col">
+                    <div class="bar-col__pair">
+                        <div class="bar-seg" style="height:46px;background:var(--primary);opacity:0.4;"></div>
+                        <div class="bar-seg" style="height:100px;background:#22C55E;"></div>
+                    </div>
+                    <span class="bar-col__label">Apr</span>
+                </div>
+            </div>
+            <div class="chart-legend">
+                <div class="chart-legend__item">
+                    <div class="chart-legend__dot" style="background:var(--primary);opacity:0.4;"></div>
+                    Spend
+                </div>
+                <div class="chart-legend__item">
+                    <div class="chart-legend__dot" style="background:#22C55E;"></div>
+                    Save
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /charts-row -->
+
+
+    <!-- ── BOTTOM ROW ── -->
+    <div class="bottom-row">
+
+        <!-- Saving Goals -->
+        <div class="card">
+            <div class="card__hdr">
+                <span class="card__title">Saving goals snapshot</span>
+                <a class="card__link" href="goals.html">View all</a>
+            </div>
+
+            <div class="goal-item">
+                <div class="goal-item__icon" style="background:#FFF7ED;">🏦</div>
+                <div class="goal-item__body">
+                    <div class="goal-item__name">Retirement Fund</div>
+                    <div class="goal-item__progress">
+                        <div class="goal-item__bar" style="width:45%;background:var(--primary);"></div>
+                    </div>
+                    <div class="goal-item__meta">
+                        <span class="goal-item__pct" style="color:var(--primary);">45%</span>
+                        <span class="goal-item__amt">$45,000 / $100,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="goal-item">
+                <div class="goal-item__icon" style="background:#FDF4FF;">👗</div>
+                <div class="goal-item__body">
+                    <div class="goal-item__name">New Dress</div>
+                    <div class="goal-item__progress">
+                        <div class="goal-item__bar" style="width:73%;background:var(--green);"></div>
+                    </div>
+                    <div class="goal-item__meta">
+                        <span class="goal-item__pct" style="color:var(--green);">73%</span>
+                        <span class="goal-item__amt">Goal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="goal-item">
+                <div class="goal-item__icon" style="background:var(--red-lt);">❤️</div>
+                <div class="goal-item__body">
+                    <div class="goal-item__name">Health Fund</div>
+                    <div class="goal-item__progress">
+                        <div class="goal-item__bar" style="width:25%;background:var(--amber);"></div>
+                    </div>
+                    <div class="goal-item__meta">
+                        <span class="goal-item__pct" style="color:var(--amber);">25%</span>
+                        <span class="goal-item__amt">$1,250 / $5,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card">
+            <div class="card__hdr">
+                <span class="card__title">Recent transactions</span>
+                <a class="card__link" href="transactions.html">View all</a>
+            </div>
+
+            <div class="txn-item">
+                <div class="txn-item__icon" style="background:#FFF7ED;">🥥</div>
+                <div class="txn-item__body">
+                    <div class="txn-item__name">Coconut Water</div>
+                    <div class="txn-item__meta">
+                        <span class="badge badge--food">Food</span>
+                        <span class="txn-item__date">Today</span>
+                    </div>
+                </div>
+                <div class="txn-item__amount" style="color:var(--red);">-$1.05</div>
+            </div>
+
+            <div class="txn-item">
+                <div class="txn-item__icon" style="background:var(--blue-lt);">👗</div>
+                <div class="txn-item__body">
+                    <div class="txn-item__name">Goal New Dress</div>
+                    <div class="txn-item__meta">
+                        <span class="badge badge--saving">Savings</span>
+                        <span class="txn-item__date">Yesterday</span>
+                    </div>
+                </div>
+                <div class="txn-item__amount" style="color:var(--blue);">-$100</div>
+            </div>
+
+            <div class="txn-item">
+                <div class="txn-item__icon" style="background:var(--green-lt);">💰</div>
+                <div class="txn-item__body">
+                    <div class="txn-item__name">Salary</div>
+                    <div class="txn-item__meta">
+                        <span class="badge badge--income">Income</span>
+                        <span class="txn-item__date">Apr 2</span>
+                    </div>
+                </div>
+                <div class="txn-item__amount" style="color:var(--green);">+$2,300</div>
+            </div>
+        </div>
+
+    </div><!-- /bottom-row -->
+
+</main>
+
+
+<!-- ============================================================
+     ADD TRANSACTION MODAL
+     ============================================================ -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+        <div class="modal__hdr">
+            <div>
+                <div class="modal__title">Add transaction</div>
+                <div class="modal__sub">Record income, expense, or saving deposit</div>
+            </div>
+            <button class="modal__close" onclick="closeModal()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="type-tabs">
+            <button class="type-tab active" onclick="setType(this)">Expense</button>
+            <button class="type-tab" onclick="setType(this)">Income</button>
+            <button class="type-tab" onclick="setType(this)">Saving dep.</button>
+        </div>
+
+        <div class="modal__amount-wrap">
+            <label class="modal__amount-label">Amount ($)</label>
+            <input class="modal__amount-input" type="number" placeholder="0.00" value="0.00"/>
+        </div>
+
+        <div class="modal__form-row">
+            <div class="form-group">
+                <label>Category</label>
+                <select>
+                    <option>Food</option>
+                    <option>Transportation</option>
+                    <option>Housing</option>
+                    <option>Entertainment</option>
+                    <option>Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" value="2026-04-21"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Note (optional)</label>
+            <input type="text" placeholder="e.g. Party at Anna's house"/>
+        </div>
+
+        <div class="form-group">
+            <label>Link to saving goal (optional)</label>
+            <select>
+                <option value="">none</option>
+                <option>Retirement Fund</option>
+                <option>New Dress</option>
+                <option>Health Fund</option>
+            </select>
+        </div>
+
+        <div class="modal__footer">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-save" onclick="closeModal()">Save transaction</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal()  { document.getElementById('overlay').classList.add('open'); }
+    function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+    function handleOverlayClick(e) { if (e.target.id === 'overlay') closeModal(); }
+    function setType(btn) {
+        document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
