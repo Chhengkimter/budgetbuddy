@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 public class Transaction {
 
-    // Enum for transaction type (OOP principle: encapsulation)
     public enum Type {
         INCOME, EXPENSE
     }
@@ -28,17 +27,15 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Type type;  // INCOME or EXPENSE
+    private Type type;  
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // A transaction belongs to one budget
     @ManyToOne
     @JoinColumn(name = "budget_id", nullable = false)
     private Budget budget;
 
-    // ── Constructors ──────────────────────────────────
     public Transaction() {}
 
     public Transaction(String description, Double amount, Type type, Budget budget) {
@@ -49,13 +46,11 @@ public class Transaction {
         this.createdAt   = LocalDateTime.now();
     }
 
-    // Auto-set timestamp before saving
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // ── Getters & Setters ─────────────────────────────
     public Long getId()                         { return id; }
     public void setId(Long id)                  { this.id = id; }
 

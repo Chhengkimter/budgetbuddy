@@ -21,16 +21,13 @@ public class Budget {
     @Column(nullable = false)
     private Double totalAmount;
 
-    // A budget belongs to one user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // A budget can have many transactions
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
-    // ── Constructors ──────────────────────────────────
     public Budget() {}
 
     public Budget(String name, Double totalAmount, User user) {
@@ -39,8 +36,7 @@ public class Budget {
         this.user        = user;
     }
 
-    // ── Calculated Field: remaining balance ──────────
-    @Transient  // Not stored in DB, calculated on the fly
+    @Transient 
     public Double getRemainingBalance() {
         if (transactions == null || transactions.isEmpty()) return totalAmount;
         double spent = transactions.stream()
@@ -54,7 +50,6 @@ public class Budget {
         return totalAmount + income - spent;
     }
 
-    // ── Getters & Setters ─────────────────────────────
     public Long getId()                       { return id; }
     public void setId(Long id)                { this.id = id; }
 

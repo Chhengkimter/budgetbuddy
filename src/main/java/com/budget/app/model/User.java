@@ -26,11 +26,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // A user can have many budgets
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Budget> budgets;
 
-    // ── Constructors ──────────────────────────────────
     public User() {}
 
     public User(String name, String email, String password) {
@@ -39,7 +37,6 @@ public class User {
         this.password = password;
     }
 
-    // ── Getters & Setters ─────────────────────────────
     public Long getId()                   { return id; }
     public void setId(Long id)            { this.id = id; }
 

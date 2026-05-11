@@ -18,19 +18,16 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    // GET /api/transactions/budget/{budgetId}
     @GetMapping("/budget/{budgetId}")
     public ResponseEntity<List<Transaction>> getByBudget(@PathVariable Long budgetId) {
         return ResponseEntity.ok(transactionService.getTransactionsByBudget(budgetId));
     }
 
-    // GET /api/transactions/user/{userId}
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Transaction>> getByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(transactionService.getTransactionsByUser(userId));
     }
 
-    // POST /api/transactions/budget/{budgetId}
     @PostMapping("/budget/{budgetId}")
     public ResponseEntity<?> addTransaction(@PathVariable Long budgetId,
                                              @Valid @RequestBody Transaction transaction) {
@@ -42,7 +39,6 @@ public class TransactionController {
         }
     }
 
-    // DELETE /api/transactions/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTransaction(@PathVariable Long id) {
         try {

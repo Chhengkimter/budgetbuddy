@@ -18,13 +18,11 @@ public class BudgetController {
     @Autowired
     private BudgetService budgetService;
 
-    // GET /api/budgets/user/{userId}
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Budget>> getBudgetsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(budgetService.getBudgetsByUser(userId));
     }
 
-    // GET /api/budgets/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
         return budgetService.getBudgetById(id)
@@ -32,7 +30,6 @@ public class BudgetController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /api/budgets/user/{userId}
     @PostMapping("/user/{userId}")
     public ResponseEntity<?> createBudget(@PathVariable Long userId,
                                            @Valid @RequestBody Budget budget) {
@@ -44,7 +41,6 @@ public class BudgetController {
         }
     }
 
-    // PUT /api/budgets/{id}
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBudget(@PathVariable Long id,
                                            @Valid @RequestBody Budget budget) {
@@ -55,7 +51,6 @@ public class BudgetController {
         }
     }
 
-    // DELETE /api/budgets/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBudget(@PathVariable Long id) {
         try {

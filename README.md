@@ -7,7 +7,7 @@ A full-stack budgeting application built with:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 budgeting-app/
