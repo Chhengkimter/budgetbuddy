@@ -135,3 +135,12 @@ Visit: **http://localhost:8080**
 | **Abstraction** | Service layer hides DB logic |
 | **Enum** | Transaction.Type (INCOME/EXPENSE) |
 | **Annotations** | @Entity, @Service, @Controller |
+
+## Database Setup
+
+1. Install MySQL 8.0
+2. Clone this repository
+3. Run this command in terminal:
+"C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql" -u root -p < database/schema_mysql.sql
+4. Enter your MySQL root password when prompted
+5. Database `budgeting_db` will be created automatically
