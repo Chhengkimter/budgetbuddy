@@ -1,4 +1,4 @@
-# 💰 Budgeting App — OOP Project
+# Budgeting App — OOP Project
 
 A full-stack budgeting application built with:
 - **Frontend**: HTML, CSS, JavaScript
@@ -7,7 +7,7 @@ A full-stack budgeting application built with:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 budgeting-app/
@@ -135,3 +135,47 @@ Visit: **http://localhost:8080**
 | **Abstraction** | Service layer hides DB logic |
 | **Enum** | Transaction.Type (INCOME/EXPENSE) |
 | **Annotations** | @Entity, @Service, @Controller |
+
+## Database Setup
+
+### Prerequisites
+- MySQL 8.0 installed and running
+
+### Steps
+
+1. Clone this repository
+
+2. Run the SQL script to create the database:
+
+   **Windows:**
+```bash
+   "C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql" -u root -p < database/schema_mysql.sql
+```
+   **Mac/Linux:**
+```bash
+   mysql -u root -p < database/schema_mysql.sql
+```
+   > If `mysql` is not recognized on Windows, add MySQL to your PATH or use MySQL Workbench instead (see below)
+
+3. Configure your database credentials in `src/main/resources/application.properties`:
+```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/budgeting_db?serverTimezone=UTC&useSSL=false
+   spring.datasource.username=root
+   spring.datasource.password=YOUR_PASSWORD_HERE
+```
+
+4. Run the Spring Boot application — the database is ready.
+
+---
+
+### Alternative: Using MySQL Workbench
+1. Open MySQL Workbench and connect to your local server
+2. Go to **File → Open SQL Script** and select `database/schema_mysql.sql`
+3. Click the ⚡ (Execute) button
+
+---
+
+### Troubleshooting
+- **"mysql is not recognized"** → Add MySQL to your system PATH, or use the full path to `mysql.exe`
+- **"Access denied"** → Double check your username and password
+- **"Can't connect to MySQL server"** → Make sure MySQL service is running

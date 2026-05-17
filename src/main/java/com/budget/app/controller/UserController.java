@@ -12,19 +12,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*")  // Allows your HTML frontend to call this API
+@CrossOrigin(origins = "*")  
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    // GET /api/users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // GET /api/users/{id}
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
@@ -32,7 +30,6 @@ public class UserController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /api/users/register
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         try {
@@ -43,7 +40,6 @@ public class UserController {
         }
     }
 
-    // POST /api/users/login
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials) {
         String email    = credentials.get("email");
@@ -54,7 +50,6 @@ public class UserController {
                 .body(Map.of("error", "Invalid email or password")));
     }
 
-    // PUT /api/users/{id}
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
         try {
@@ -64,7 +59,6 @@ public class UserController {
         }
     }
 
-    // DELETE /api/users/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
