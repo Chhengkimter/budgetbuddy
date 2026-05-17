@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BudDy — Add Transaction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/login.css"> <link rel="stylesheet" href="css/add_transaction.css"/>
+</head>
+<body>
+
+<div class="register-card">
+    <div class="back-navigation">
+        <a href="transactions.html" class="back-link">← Back to Transactions</a>
+    </div>
+
+    <header class="modal-header-section">
+        <h1 class="modal-title-text">Add transaction</h1>
+        <p class="modal-sub-text">Record income, expense, or saving deposit</p>
+    </header>
+
+    <form id="addTransactionForm">
+        
+        <div class="type-tabs-container">
+            <button type="button" class="tab-option active" onclick="setTransactionType('EXPENSE')">Expense</button>
+            <button type="button" class="tab-option" onclick="setTransactionType('INCOME')">Income</button>
+            <button type="button" class="tab-option" onclick="setTransactionType('SAVING')">Saving dep.</button>
+        </div>
+        
+        <input type="hidden" id="transactionType" name="type" value="EXPENSE">
+
+        <div class="form-group giant-amount-field">
+            <label for="amount">Amount ($)</label>
+            <input type="number" step="0.01" id="amount" name="amount" placeholder="0.00" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="FOOD">Food</option>
+                    <option value="TRANSPORTATION">Transportation</option>
+                    <option value="HOUSING">Housing</option>
+                    <option value="ENTERTAINMENT">Entertainment</option>
+                    <option value="HEALTH">Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="note">Note (optional)</label>
+            <input type="text" id="note" name="note" placeholder="e.g. Party snack">
+        </div>
+
+        <div class="form-group">
+            <label for="savingGoal">Link to saving goal (optional)</label>
+            <select id="savingGoal" name="savingGoalId">
+                <option value="">none</option>
+                <option value="1">Retirement Fund</option>
+                <option value="2">New Dress</option>
+                <option value="3">Health Fund</option>
+            </select>
+        </div>
+
+        <div class="form-actions-row">
+            <button type="button" class="btn-secondary" onclick="window.location.href='transactions.html'">Cancel</button>
+            <button type="button" id="saveTransactionBtn" class="btn-primary-action" onclick="window.location.href='transactions.html'">Save transaction</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Handles toggling state safely before pipeline submissions
+    function setTransactionType(type) {
+        document.getElementById('transactionType').value = type;
+        const buttons = document.querySelectorAll('.tab-option');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.innerText.toUpperCase().includes(type.substring(0,3))) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    // Automatically sets input interface parameter fields safely to present date coordinates
+    document.getElementById('date').valueAsDate = new Date();
+</script>
+
+</body>
+</html>

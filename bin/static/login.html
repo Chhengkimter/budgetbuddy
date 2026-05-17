@@ -24,29 +24,26 @@
         <p class="subtitle">Welcome back! Please enter your details.</p>
     </header>
 
-    <form>
+    <form id="loginForm">
         <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" placeholder="yourname@gmail.com">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="yourname@gmail.com" required>
         </div>
 
         <div class="form-group">
-            <label>Password</label>
-            <input type="password" placeholder="••••••••••••">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="••••••••••••" required>
         </div>
 
         <div class="helper-row">
             <div class="terms-container">
-                <input type="checkbox" id="remember">
+                <input type="checkbox" id="remember" name="remember">
                 <label for="remember" class="checkbox-label">Remember me</label>
             </div>
             <a href="#" class="forgot-password">Forgot password?</a>
         </div>
 
-        <a href="dashboard.html">
-        <button type="submit" class="btn-main">Log In</button>
-        </a>
-
+        <button type="button" id="loginBtn" class="btn-main" onclick="window.location.href='dashboard.html'">Log In</button>
     </form>
 
     <footer class="form-footer">
