@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
+<script src="js/register.js"></script>
 
 <div class="register-card">
     <div class="logo">
@@ -24,27 +25,26 @@
         <p class="subtitle">Join thousands of users tracking their success.</p>
     </header>
 
-    <form>
+    <form id="registerForm" onsubmit="handleRegister(event)">
         <div class="form-row">
             <div class="form-group">
-                <label>First Name</label>
-                <input type="text" placeholder="Xxxxx">
-            </div>
-            <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" placeholder="Xxxxx">
+                <label>Full Name</label>
+                <input type="text" id="regName" placeholder="John Doe" required>
             </div>
         </div>
 
         <div class="form-group">
             <label>Email Address</label>
-            <input type="email" placeholder="yourname@gmail.com">
+            <input type="email" id="regEmail" placeholder="yourname@gmail.com" required>
         </div>
 
         <div class="form-group">
             <label>Password</label>
-            <input type="password" placeholder="••••••••••••">
+            <input type="password" id="regPassword" placeholder="••••••••••••" required>
         </div>
+
+        <div id="registerError" style="color: #e74c3c; margin-bottom: 10px; display: none;"></div>
+        <div id="registerSuccess" style="color: #27ae60; margin-bottom: 10px; display: none;"></div>
 
         <div class="terms-container">
             <input type="checkbox" id="agree" checked>
