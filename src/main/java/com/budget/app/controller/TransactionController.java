@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+// Handles all HTTP requests related to transactions
 @RestController
 @RequestMapping("/api/transactions")
 @CrossOrigin(origins = "*")
@@ -18,16 +19,26 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
+    // ── GET /api/transactions/budget/{budgetId} ───────
+    // Returns all transactions inside one specific budget
+    // Example: GET /api/transactions/budget/2
     @GetMapping("/budget/{budgetId}")
     public ResponseEntity<List<Transaction>> getByBudget(@PathVariable Long budgetId) {
         return ResponseEntity.ok(transactionService.getTransactionsByBudget(budgetId));
     }
 
+    // ── GET /api/transactions/user/{userId} ───────────
+    // Returns ALL transactions across all budgets for a user
+    // Useful for the dashboard summary view
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Transaction>> getByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(transactionService.getTransactionsByUser(userId));
     }
 
+    // ── POST /api/transactions/budget/{budgetId} ──────
+    // Adds a new transaction to a specific budget
+    // Request body must include: description, amount, type (INCOME or EXPENSE)
+    // Optional body fields: categoryTag, notes
     @PostMapping("/budget/{budgetId}")
     public ResponseEntity<?> addTransaction(@PathVariable Long budgetId,
                                              @Valid @RequestBody Transaction transaction) {
@@ -39,6 +50,9 @@ public class TransactionController {
         }
     }
 
+    // ── DELETE /api/transactions/{id} ─────────────────
+    // Soft deletes a transaction (marks is_deleted = true, doesn't remove from DB)
+    // Example: DELETE /api/transactions/5
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTransaction(@PathVariable Long id) {
         try {

@@ -8,7 +8,12 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByBudgetId(Long budgetId);
+    // Get all non-deleted transactions for a specific budget
+    // UPDATED: added IsDeletedFalse to exclude soft-deleted transactions
+    // SQL: SELECT * FROM transactions WHERE budget_id = ? AND is_deleted = false
+    List<Transaction> findByBudgetIdAndIsDeletedFalse(Long budgetId);
 
-    List<Transaction> findByBudgetUserId(Long userId);
+    // Get all non-deleted transactions across all budgets for a user
+    // SQL: SELECT * FROM transactions WHERE budget.user_id = ? AND is_deleted = false
+    List<Transaction> findByBudgetUserIdAndIsDeletedFalse(Long userId);
 }
