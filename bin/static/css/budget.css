@@ -1,0 +1,140 @@
+/* =============================================
+   BUDGET BUDDY — SYMMETRICAL BUDGET LAYOUT CSS
+   ============================================= */
+
+/* Main layout grid splits workspace into two clean vertical channels */
+.budget-master-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr; /* Exact column configuration as dashboard layout sheets */
+    gap: 20px;
+    width: 100%;
+}
+
+/* Sizing overview modules mapping down directly to progress containers */
+.header-stat-card {
+    padding: 30px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 160px;
+}
+
+.card-spend-bg {
+    background: var(--red-lt);
+}
+
+.budget-card-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.spend-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.pct-used-badge {
+    background: #FEE2E2;
+    color: var(--red);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.budget-card-amount {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 10px;
+}
+
+.text-primary { color: var(--primary); }
+.text-danger { color: var(--red); }
+
+/* Progress elements interior list configurations */
+.budget-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.budget-item-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.budget-meta-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-sec);
+}
+.budget-meta-info .bold-amt {
+    color: var(--text);
+    font-weight: 700;
+}
+.progress-container {
+    width: 100%;
+    height: 14px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+}
+.divider-line {
+    height: 2px;
+    background: var(--border);
+    margin: 40px 0;
+}
+
+/* absolute 28px typography form parameters integration */
+#budgetLimitForm .form-group label {
+    display: block;
+    font-size: 28px !important;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+#budgetLimitForm .form-group input,
+#budgetLimitForm .form-group select {
+    width: 100%;
+    padding: 20px 24px;
+    font-size: 22px;
+    font-weight: 600;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    outline: none;
+}
+
+/* Action button configurations updated to match high contrast dashboard spec */
+.btn-submit-action {
+    width: 100%;
+    padding: 22px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.14s, transform 0.1s;
+    margin-top: 24px;
+}
+.btn-submit-action:hover { 
+    background: #1340B0; 
+}
+.btn-submit-action:active {
+    transform: scale(0.995);
+}
