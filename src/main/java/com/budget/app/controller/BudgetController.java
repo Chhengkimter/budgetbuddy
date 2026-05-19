@@ -1,6 +1,6 @@
 package com.budget.app.controller;
 
-import com.budget.app.dto.BudgetDTO;          // ← ADD THIS IMPORT
+import com.budget.app.dto.BudgetDTO;
 import com.budget.app.model.Budget;
 import com.budget.app.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class BudgetController {
                                            @Valid @RequestBody Budget budget) {
         try {
             Budget updated = budgetService.updateBudget(id, budget);
-            return ResponseEntity.ok(new BudgetDTO(updated));   // ← DTO here too
+            return ResponseEntity.ok(new BudgetDTO(updated));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
