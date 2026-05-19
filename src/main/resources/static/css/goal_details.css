@@ -1,0 +1,183 @@
+/* =============================================
+   BUDGET BUDDY — SYMMETRICAL GOAL DETAIL CSS
+   ============================================= */
+
+.back-nav-container { 
+    margin-bottom: 5px; 
+}
+
+.back-link { 
+    font-size: 20px; 
+    color: var(--primary); 
+    font-weight: 700; 
+}
+
+/* Banner center header block */
+.banner-goal-center { 
+    text-align: center; 
+    padding: 15px 0; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 12px; 
+}
+.banner-emoji { font-size: 56px; }
+.banner-title { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+.banner-progress-wrap { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; }
+.pct-subtitle-text { font-size: 18px; color: var(--text-sec); font-weight: 600; text-align: center; }
+
+.progress-container {
+    width: 100%;
+    height: 14px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+}
+
+/* ── CORE SYMMETRICAL DISPLAY GRID MAPPING ── */
+.goal-detail-master-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 equal structural columns footprint */
+    gap: 20px;
+    width: 100%;
+}
+
+/* Overview Stat Cards Sizing (Span 2 columns each to lock under upper bounds) */
+.summary-stat-card {
+    grid-column: span 2;
+    padding: 30px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 150px;
+}
+
+.card-remain-bg { background: var(--red-lt); }
+.card-needed-bg { background: var(--amber-lt); }
+
+.detail-card-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.detail-card-amount {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 10px;
+}
+
+.text-danger { color: var(--red); }
+.text-amber { color: var(--amber); }
+
+/* Workspace Card Alignments */
+.vertical-stack-left {
+    grid-column: span 3; /* Spans exactly 50% width */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-card-span {
+    grid-column: span 3; /* Spans exactly 50% width */
+}
+
+.interactive-workspace-card {
+    padding: 36px;
+    width: 100%;
+}
+
+/* Form configurations matching standalone layout sizes */
+.form-grid-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.goal-detail-master-grid .form-group label {
+    display: block;
+    font-size: 28px !important;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.goal-detail-master-grid .form-group input {
+    width: 100%;
+    padding: 20px 24px;
+    font-size: 22px;
+    font-weight: 600;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    outline: none;
+}
+
+/* History list display block properties */
+.ledger-history-container { display: flex; flex-direction: column; }
+.ledger-row-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 2px solid var(--bg); }
+.ledger-row-item:last-child { border-bottom: none; }
+.item-left-cell .main-title { font-size: 24px; font-weight: 700; }
+.item-left-cell .sub-date { font-size: 16px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+.item-right-cell { display: flex; align-items: center; gap: 16px; }
+.item-right-cell .green-tx { font-size: 24px; font-weight: 800; color: var(--green); }
+
+.delete-icon-btn { 
+    width: 50px; 
+    height: 50px; 
+    background: var(--white); 
+    border: 2px solid var(--border); 
+    border-radius: 8px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 18px; 
+}
+.delete-icon-btn:hover { background: var(--red-lt); border-color: var(--red); color: var(--red); }
+
+/* Functional action execution triggers scaling rules */
+.btn-primary-action {
+    width: 100%;
+    padding: 22px;
+    font-size: 22px;
+    font-weight: 800;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.14s;
+}
+.btn-primary-action:hover { background: #1340B0; }
+.btn-fit { width: fit-content; padding: 18px 40px; margin-top: 10px; }
+
+.form-double-actions-footer { 
+    display: flex; 
+    gap: 16px; 
+    margin-top: 40px; 
+    border-top: 2px solid var(--border); 
+    padding-top: 30px; 
+}
+
+.btn-danger-action {
+    width: 100%;
+    padding: 22px;
+    font-size: 22px;
+    font-weight: 800;
+    background: var(--red-lt);
+    color: var(--red);
+    border: 2px solid var(--red);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.14s;
+}
+.btn-danger-action:hover { background: var(--red); color: var(--white); }
