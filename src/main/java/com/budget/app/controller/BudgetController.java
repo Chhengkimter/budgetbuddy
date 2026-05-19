@@ -19,7 +19,6 @@ public class BudgetController {
     @Autowired
     private BudgetService budgetService;
 
-    // ── GET /api/budgets/user/{userId} ────────────────
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BudgetDTO>> getBudgetsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(
@@ -30,7 +29,6 @@ public class BudgetController {
         );
     }
 
-    // ── POST /api/budgets/user/{userId} ───────────────
     @PostMapping("/user/{userId}")
     public ResponseEntity<BudgetDTO> createBudget(
             @PathVariable Long userId,
@@ -39,7 +37,6 @@ public class BudgetController {
         return ResponseEntity.status(201).body(new BudgetDTO(saved));
     }
 
-    // ── PUT /api/budgets/{id} ─────────────────────────
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBudget(@PathVariable Long id,
                                            @Valid @RequestBody Budget budget) {
@@ -51,7 +48,6 @@ public class BudgetController {
         }
     }
 
-    // ── DELETE /api/budgets/{id} ──────────────────────
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBudget(@PathVariable Long id) {
         try {

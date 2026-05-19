@@ -4,10 +4,6 @@ import com.budget.app.model.Budget;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Data Transfer Object for Budget
- * Used to transfer budget data to frontend without exposing internal fields
- */
 public class BudgetDTO {
 
     private Long id;
@@ -21,7 +17,6 @@ public class BudgetDTO {
     private LocalDateTime updatedAt;
     private Boolean isActive;
 
-    // ── Constructor from Budget entity ────────────
     public BudgetDTO(Budget budget) {
         this.id = budget.getId();
         this.name = budget.getName();
@@ -35,10 +30,8 @@ public class BudgetDTO {
         this.isActive = budget.getIsActive();
     }
 
-    // ── Default constructor ──────────────────────
     public BudgetDTO() {}
 
-    // ── Getters and Setters ──────────────────────
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
