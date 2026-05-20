@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BudDy — Account Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/dashboard.css"/>
+    <link rel="stylesheet" href="css/settings.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar__logo">
+        <div class="navbar__logo-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0
+                       1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12
+                       c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182
+                       s2.9-.879 4.006 0l.415.33"/>
+            </svg>
+        </div>
+        <span class="navbar__logo-name">Budget Buddy</span>
+    </div>
+
+<div class="navbar__links">
+        <a class="nav__link" href="dashboard.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+            Dashboard
+        </a>
+        <a class="nav__link" href="budget.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2
+                       a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10
+                       m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2
+                       a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Budget
+        </a>
+        <a class="nav__link" href="goals.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12
+                       l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Goals
+        </a>
+        <a class="nav__link" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
+    </div>
+
+<div class="navbar__right">
+    <div id="liveTransactionDateDisplay" style="font-size: 22px; font-weight: 700; color: #6B7280;">Date: --/--/----</div>
+
+<script>
+    (function() {
+        const today = new Date();
+        const displayElem = document.getElementById('liveTransactionDateDisplay');
+        if (displayElem) {
+            displayElem.innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
+        }
+    })();
+</script>
+        <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
+    </div>
+</nav>
+
+<main class="page settings-page-container">
+    
+    <div class="greeting settings-greeting-box">
+        <h2 class="greeting__title">Account settings</h2>
+        <p class="greeting__sub">Update your personal profile information and settings.</p>
+    </div>
+
+    <div class="settings-center-wrapper">
+        
+        <div class="card profile-card">
+            <div class="profile-avatar-large">MK</div>
+            <div class="profile-meta-actions">
+                <h3>Your Profile Picture</h3>
+                <button type="button" class="btn-secondary">Change photo</button>
+            </div>
+        </div>
+
+        <div class="card content-card settings-form-card">
+            <div class="card__hdr">
+                <span class="card__title">Personal Information</span>
+            </div>
+            
+            <form id="settingsPersonalForm">
+                <div class="form-group">
+                    <label for="settingsUsername">Username</label>
+                    <input type="text" id="settingsUsername" value="Sreynit" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="settingsEmail">Email Address</label>
+                    <input type="email" id="settingsEmail" value="sreynit@example.com" required />
+                </div>
+                
+                <button type="button" class="btn-submit-action">Save changes</button>
+            </form>
+        </div>
+
+        <div class="card content-card settings-form-card">
+            <div class="card__hdr">
+                <span class="card__title">Preferences</span>
+            </div>
+            
+            <form id="settingsPreferencesForm">
+                <div class="form-group">
+                    <label for="settingsCurrency">Primary Currency</label>
+                    <select id="settingsCurrency" required>
+                        <option value="USD">USD ($)</option>
+                        <option value="KHR">KHR (៛)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="settingsLanguage">Language</label>
+                    <select id="settingsLanguage" required>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                
+                <button type="button" class="btn-submit-action">Save preferences</button>
+            </form>
+        </div>
+
+        <div class="card content-card settings-form-card">
+            <div class="card__hdr">
+                <span class="card__title">Data & Account</span>
+            </div>
+            
+            <div class="account-danger-zone">
+                <div class="danger-item">
+                    <div class="danger-text">
+                        <h4>Export Account Data</h4>
+                        <p>Download a backup copy of your entire transaction logs, budgets, and savings goals records as a CSV layout sheet.</p>
+                    </div>
+                    <button type="button" class="btn-secondary" id="btnExportData">Export data</button>
+                </div>
+                
+                <div class="divider-line"></div>
+                
+                <div class="danger-item">
+                    <div class="danger-text">
+                        <h4 style="color: var(--red);">Delete Account</h4>
+                        <p>Permanently wipe out your entire account data structures, profiles, and associated records. This action is irreversible.</p>
+                    </div>
+                    <button type="button" class="btn-delete-account" id="btnDeleteAccount">Delete account</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

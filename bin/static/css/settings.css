@@ -1,0 +1,230 @@
+/* ============================================================
+   BUDGET BUDDY — LARGE EMBEDDED SETTINGS MODULE STYLES
+   ============================================================ */
+
+/* Centers everything inside the main body page section */
+.settings-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 50px 32px;
+    box-sizing: border-box;
+}
+
+/* Aligns the page header titles perfectly over the larger boxes */
+.settings-greeting-box {
+    width: 100%;
+    max-width: 1000px; /* Expanded from 800px to absorb screen blank space */
+    text-align: left;
+    margin-bottom: 32px;
+}
+
+.settings-greeting-box .greeting__title {
+    font-size: 40px; /* Made header visually more impactful */
+    font-weight: 800;
+}
+
+.settings-greeting-box .greeting__sub {
+    font-size: 20px;
+    margin-top: 6px;
+}
+
+/* Expanded container to widen the panels and reduce side padding layout gaps */
+.settings-center-wrapper {
+    width: 100%;
+    max-width: 1000px; /* Match width to fill screen gracefully */
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-bottom: 80px;
+}
+
+/* Profile Photo Card Setup */
+.profile-card {
+    padding: 40px; /* Increased interior layout breathing area */
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.profile-avatar-large {
+    width: 110px; /* Made photo circle bigger */
+    height: 110px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.profile-meta-actions h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.profile-meta-actions .btn-secondary {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.profile-meta-actions .btn-secondary:hover {
+    background: var(--bg);
+}
+
+/* Form Layout Design */
+.settings-form-card {
+    padding: 48px 44px; /* Increased interior form box padding sizes */
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.settings-form-card .card__hdr {
+    border-bottom: 2.5px solid var(--bg);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+}
+
+.settings-form-card .card__title {
+    font-size: 30px !important; /* Made subheadings larger */
+}
+
+.settings-form-card .form-group {
+    margin-bottom: 32px;
+}
+
+.settings-form-card .form-group label {
+    display: block;
+    font-size: 24px; /* Scaled up field labels */
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.settings-form-card .form-group input,
+.settings-form-card .form-group select {
+    width: 100%;
+    padding: 20px 24px; /* Tall inputs for high-end look */
+    font-size: 20px; /* Larger typed input values */
+    font-weight: 600;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.settings-form-card .form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234B5563' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 24px center;
+    background-size: 18px;
+    padding-right: 56px;
+}
+
+.settings-form-card .form-group input:focus,
+.settings-form-card .form-group select:focus {
+    border-color: var(--primary);
+}
+
+/* Large Submit Action Button Layout */
+.settings-form-card .btn-submit-action {
+    width: 100%;
+    padding: 22px; /* Thicker button structure */
+    font-size: 24px; /* Larger action text font */
+    font-weight: 800;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.settings-form-card .btn-submit-action:hover {
+    opacity: 0.9;
+}
+
+/* Data & Account Rows Design */
+.danger-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.danger-text h4 {
+    font-size: 24px; /* Scaled header text */
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.danger-text p {
+    font-size: 18px; /* Easier to scan descriptions */
+    font-weight: 500;
+    color: var(--text-sec);
+    line-height: 1.6;
+}
+
+.divider-line {
+    margin: 32px 0;
+    height: 2px;
+    background: var(--border);
+}
+
+.danger-item .btn-secondary {
+    padding: 16px 28px;
+    font-size: 20px;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.danger-item .btn-secondary:hover {
+    background: var(--bg);
+}
+
+.btn-delete-account {
+    padding: 16px 28px;
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--red-lt);
+    border: 2px solid var(--red);
+    border-radius: var(--radius-sm);
+    color: var(--red);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+.btn-delete-account:hover {
+    background: var(--red);
+    color: var(--white);
+}
