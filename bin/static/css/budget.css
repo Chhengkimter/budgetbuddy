@@ -138,3 +138,20 @@
 .btn-submit-action:active {
     transform: scale(0.995);
 }
+.btn-delete-budget {
+    width: 100%;
+    margin-top: 12px;
+    padding: 20px 24px;
+    font-size: 22px;
+    font-weight: 800;
+    background: var(--red-lt);
+    border: 2px solid var(--red);
+    border-radius: var(--radius-sm);
+    color: var(--red);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-delete-budget:hover {
+    background: var(--red);
+    color: var(--white);
+}
