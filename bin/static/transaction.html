@@ -7,6 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/transaction.css"/>
+    <style>
+        /* Custom styles to color-code the Saving rows and badges properly */
+        .badge-saving {
+            background: #DBEAFE;
+            color: #3B82F6;
+        }
+        .tx-amount-saving {
+            color: #3B82F6;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
@@ -73,15 +84,10 @@
     </div>
 
     <div class="filter-row">
-        <button class="filter-pill active" id="filterAllBtn">All</button>
-        
-        <select class="filter-dropdown-pill" id="incomeCategoryFilter">
-            <option value="">Income (All Categories)</option>
-            </select>
-        
-        <select class="filter-dropdown-pill" id="spendingBudgetFilter">
-            <option value="">Spending (All Budgets)</option>
-            </select>
+        <button class="filter-pill active" onclick="filterTransactions('ALL')">All</button>
+        <button class="filter-pill" onclick="filterTransactions('INCOME')">Income</button>
+        <button class="filter-pill" onclick="filterTransactions('EXPENSE')">Expense</button>
+        <button class="filter-pill" onclick="filterTransactions('SAVING')">Saving</button>
     </div>
 
     <div class="category-action-bar">
@@ -93,7 +99,7 @@
             <thead>
                 <tr>
                     <th>TITLE / NOTE</th>
-                    <th>CATEGORY</th>
+                    <th>CATEGORY / TARGET</th>
                     <th>DATE</th>
                     <th>AMOUNT</th>
                     <th>TYPE</th>
@@ -106,14 +112,14 @@
     </div>
 </main>
 
-<div class="overlay" id="txOverlay" onclick="handleTxOverlayClick(e)">
+<div class="overlay" id="txOverlay">
     <div class="modal">
-        <h3 class="modal__title" id="modalTxTitle">Add transaction</h3>
+        <h3 class="modal__title">Add transaction</h3>
         
         <div class="type-selector-tabs">
             <button class="type-tab active" onclick="setTxType('EXPENSE')">Expense</button>
             <button class="type-tab" onclick="setTxType('INCOME')">Income</button>
-            <button class="type-tab" onclick="setTxType('SAVING')">Saving Deposit</button>
+            <button class="type-tab" onclick="setTxType('SAVING')">Saving</button>
         </div>
 
         <div class="form-group">
@@ -123,10 +129,20 @@
 
         <div class="form-grid-split">
             <div class="form-group" id="txCategoryFieldWrapper">
-                <label>Category</label>
+                <label>Budget Category</label>
                 <select id="txCategorySelect">
-                    <option value="">Select a category...</option>
-                    </select>
+                    <option value="FOOD">Food</option>
+                    <option value="TRANSPORTATION">Transportation</option>
+                    <option value="ENTERTAINMENT">Entertainment</option>
+                </select>
+            </div>
+            <div class="form-group" id="txGoalFieldWrapper" style="display: none;">
+                <label>Link to Saving Goal</label>
+                <select id="txGoalSelect">
+                    <option value="Retirement Fund">🏦 Retirement Fund</option>
+                    <option value="New Dress">👗 New Dress</option>
+                    <option value="Trip to China">✈️ Trip to China</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Date</label>
@@ -139,16 +155,9 @@
             <input type="text" placeholder="e.g. Flight booking ticket" id="txNote"/>
         </div>
 
-        <div class="form-group" id="txGoalFieldWrapper" style="display: none;">
-            <label>Link to saving goal</label>
-            <select id="txGoalSelect" required>
-                <option value="">Select saving target goal...</option>
-                </select>
-        </div>
-
         <div class="modal__footer">
-            <button class="btn-cancel" onclick="closeTxModal()">Cancel</button>
-            <button class="btn-save" id="btnSaveTxSubmit">Save transaction</button>
+            <button type="button" class="btn-cancel" onclick="closeTxModal()">Cancel</button>
+            <button type="button" class="btn-save" onclick="addManualTransaction()">Save transaction</button>
         </div>
     </div>
 </div>
@@ -156,34 +165,103 @@
 <div class="overlay" id="categoryOverlay">
     <div class="modal" style="max-width: 550px;">
         <h3 class="modal__title">Manage categories</h3>
-        
         <div class="add-category-input-group">
-            <input type="text" id="newCategoryNameInput" placeholder="New category name..."/>
-            <button class="btn-add-cat-submit" id="btnAddCategoryAction">Add</button>
+            <input type="text" placeholder="New category name..."/>
+            <button class="btn-add-cat-submit">Add</button>
         </div>
-        
-        <label class="list-context-label">Existing custom categories:</label>
-        <div class="manage-category-list-frame" id="dynamicCategoryListContainer"></div>
-
         <div class="modal__footer" style="margin-top: 20px;">
-            <button class="btn-cancel" style="width: 100%;" onclick="closeCategoryModal()">Close</button>
+            <button type="button" class="btn-cancel" style="width: 100%;" onclick="closeCategoryModal()">Close</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Realtime date initialization scripts
-    document.getElementById('txRealtimeDateInput').valueAsDate = new Date();
-    const d = new Date();
-    document.getElementById('currentDateDisplay').innerText = "Date: " + String(d.getDate()).padStart(2,'0') + "/" + String(d.getMonth()+1).padStart(2,'0') + "/" + d.getFullYear();
-    
-    // Modal toggle anchors for your JS code triggers
+    // ==========================================
+    // REAL LIVE DATA STRUCTURE (Ready for Spring Boot)
+    // ==========================================
+    let currentFilter = 'ALL';
+
+    const transactionsData = [
+        { note: "Dinner with teammates", category: "Food", date: "2026-05-20", amount: 45.50, type: "EXPENSE" },
+        { note: "Monthly Salary Payout", category: "Salary", date: "2026-05-01", amount: 2500.00, type: "INCOME" },
+        { note: "Trip to China Ticket", category: "Trip to China", date: "2026-04-20", amount: 100.00, type: "SAVING" },
+        { note: "Gas refill station", category: "Transportation", date: "2026-05-18", amount: 30.00, type: "EXPENSE" },
+        { note: "Retirement allocation", category: "Retirement Fund", date: "2026-05-02", amount: 1500.00, type: "SAVING" }
+    ];
+
+    // Dynamic Live Rendering Pipeline
+    function renderTransactions() {
+        const tbody = document.getElementById('transactionTableBody');
+        tbody.innerHTML = "";
+
+        const filtered = transactionsData.filter(tx => {
+            if (currentFilter === 'ALL') return true;
+            return tx.type === currentFilter;
+        });
+
+        filtered.forEach(tx => {
+            const tr = document.createElement('tr');
+            
+            // Assign CSS classes based on type dynamically
+            let typeClass = tx.type.toLowerCase();
+            let sign = tx.type === 'EXPENSE' ? '-' : '+';
+
+            tr.innerHTML = `
+                <td><strong>${tx.note}</strong></td>
+                <td><span style="font-size: 13px; font-weight: 500; color: #4B5563;">${tx.category}</span></td>
+                <td>${tx.date}</td>
+                <td><span class="tx-amount-${typeClass}">${sign}$${tx.amount.toFixed(2)}</span></td>
+                <td><span class="badge-type badge-${typeClass}">${tx.type}</span></td>
+                <td><button class="delete-icon-btn" style="background:none; border:none; cursor:pointer;">🗑</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Filter Trigger Logic for the Pills
+    function filterTransactions(type) {
+        currentFilter = type;
+        
+        // Toggle the .active class styles visual highlight
+        const pills = document.querySelectorAll('.filter-pill');
+        pills.forEach(pill => pill.classList.remove('active'));
+        event.target.classList.add('active');
+
+        renderTransactions();
+    }
+
+    // Adds new entries instantly to the list data pool
+    function addManualTransaction() {
+        const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+        const note = document.getElementById('txNote').value || "Manual Entry";
+        const date = document.getElementById('txRealtimeDateInput').value;
+        const activeTab = document.querySelector('.type-tab.active').innerText.toUpperCase();
+        
+        let category = "";
+        if (activeTab === 'SAVING') {
+            category = document.getElementById('txGoalSelect').value;
+        } else if (activeTab === 'INCOME') {
+            category = "Income Flow";
+        } else {
+            category = document.getElementById('txCategorySelect').value;
+        }
+
+        if(amount <= 0 || !date) {
+            alert("Please provide proper amount and date metrics.");
+            return;
+        }
+
+        transactionsData.unshift({ note, category, date, amount, type: activeTab === 'SAVING DEPOSIT' ? 'SAVING' : activeTab });
+        closeTxModal();
+        renderTransactions();
+    }
+
+    // Modal view triggers
     function openTxModal() { document.getElementById('txOverlay').classList.add('open'); }
     function closeTxModal() { document.getElementById('txOverlay').classList.remove('open'); }
     function openCategoryModal() { document.getElementById('categoryOverlay').classList.add('open'); }
     function closeCategoryModal() { document.getElementById('categoryOverlay').classList.remove('open'); }
     
-    // Toggle handling function blueprint you can expand in your JS
     function setTxType(type) {
         document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
@@ -195,10 +273,15 @@
             document.getElementById('txGoalFieldWrapper').style.display = 'none';
         }
     }
-</script>
-<script>
-    const today = new Date();
-    document.getElementById('liveTransactionDateDisplay').innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
+
+    // Initialize layout anchors
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('txRealtimeDateInput').valueAsDate = new Date();
+        const today = new Date();
+        document.getElementById('currentDateDisplay').innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
+        
+        renderTransactions();
+    });
 </script>
 </body>
 </html>

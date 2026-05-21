@@ -4,8 +4,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Add Transaction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="css/login.css"> <link rel="stylesheet" href="css/add_transaction.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/login.css"> 
+    <link rel="stylesheet" href="css/add_transaction.css"/>
 </head>
 <body>
 
@@ -36,14 +37,9 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label for="category">Category</label>
+                <label for="category" id="categoryFieldLabel">Budget</label>
                 <select id="category" name="category" required>
-                    <option value="FOOD">Food</option>
-                    <option value="TRANSPORTATION">Transportation</option>
-                    <option value="HOUSING">Housing</option>
-                    <option value="ENTERTAINMENT">Entertainment</option>
-                    <option value="HEALTH">Health</option>
-                </select>
+                    </select>
             </div>
             <div class="form-group">
                 <label for="date">Date</label>
@@ -56,25 +52,46 @@
             <input type="text" id="note" name="note" placeholder="e.g. Party snack">
         </div>
 
-        <div class="form-group">
-            <label for="savingGoal">Link to saving goal (optional)</label>
+        <div class="form-group" id="savingGoalFieldWrapper">
+            <label for="savingGoal" id="savingGoalFieldLabel">Link to saving goal (optional)</label>
             <select id="savingGoal" name="savingGoalId">
-                <option value="">none</option>
-                <option value="1">Retirement Fund</option>
-                <option value="2">New Dress</option>
-                <option value="3">Health Fund</option>
-            </select>
+                </select>
         </div>
 
         <div class="form-actions-row">
-            <button type="button" class="btn-secondary" onclick="window.location.href='transactions.html'">Cancel</button>
-            <button type="button" id="saveTransactionBtn" class="btn-primary-action" onclick="window.location.href='transactions.html'">Save transaction</button>
+            <button type="button" class="btn-secondary" onclick="window.location.href='transaction.html'">Cancel</button>
+            <button type="button" id="saveTransactionBtn" class="btn-primary-action" onclick="window.location.href='transaction.html'">Save transaction</button>
         </div>
     </form>
 </div>
 
 <script>
-    // Handles toggling state safely before pipeline submissions
+    // Configuration data lists mapping back to database entities
+    const optionsDatabase = {
+        EXPENSE_BUDGETS: [
+            { value: "FOOD", text: "Food Budget" },
+            { value: "TRANSPORTATION", text: "Transportation Budget" },
+            { value: "HOUSING", text: "Housing Budget" },
+            { value: "ENTERTAINMENT", text: "Entertainment Budget" },
+            { value: "HEALTH", text: "Health Budget" }
+        ],
+        INCOME_CATEGORIES: [
+            { value: "SALARY", text: "Salary" },
+            { value: "FREELANCE", text: "Freelance" },
+            { value: "INVESTMENTS", text: "Investments" }
+        ],
+        SAVING_CATEGORIES: [
+            { value: "GOAL_DEPOSIT", text: "Goal Deposit Allocation" }
+        ],
+        SAVINGS_LINKS: [
+            { value: "", text: "none" },
+            { value: "MONTHLY_GOAL", text: "Monthly Saving Goal (Current Month)" },
+            { value: "1", text: "Retirement Fund" },
+            { value: "2", text: "New Dress" },
+            { value: "3", text: "Health Fund" }
+        ]
+    };
+
     function setTransactionType(type) {
         document.getElementById('transactionType').value = type;
         const buttons = document.querySelectorAll('.tab-option');
@@ -84,10 +101,62 @@
                 btn.classList.add('active');
             }
         });
+
+        const categoryLabel = document.getElementById('categoryFieldLabel');
+        const categorySelect = document.getElementById('category');
+        const savingGoalLabel = document.getElementById('savingGoalFieldLabel');
+        const savingGoalSelect = document.getElementById('savingGoal');
+        const savingGoalWrapper = document.getElementById('savingGoalFieldWrapper');
+
+        // Clear choices before insertion
+        categorySelect.innerHTML = "";
+        savingGoalSelect.innerHTML = "";
+
+        if (type === 'EXPENSE') {
+            categoryLabel.innerText = "Budget";
+            savingGoalWrapper.style.display = "none"; // Hide saving goal for expenses
+            
+            optionsDatabase.EXPENSE_BUDGETS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+        } 
+        else if (type === 'INCOME') {
+            categoryLabel.innerText = "Category";
+            savingGoalWrapper.style.display = "none"; // Hide saving goal for income
+            
+            optionsDatabase.INCOME_CATEGORIES.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+        } 
+        else if (type === 'SAVING') {
+            categoryLabel.innerText = "Category";
+            savingGoalLabel.innerText = "Link to Saving"; // Refactored label text
+            savingGoalWrapper.style.display = "block";
+            
+            optionsDatabase.SAVING_CATEGORIES.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+
+            optionsDatabase.SAVINGS_LINKS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                savingGoalSelect.appendChild(el);
+            });
+        }
     }
     
-    // Automatically sets input interface parameter fields safely to present date coordinates
     document.getElementById('date').valueAsDate = new Date();
+    setTransactionType('EXPENSE'); // Run standard setup on launch
 </script>
 
 </body>
