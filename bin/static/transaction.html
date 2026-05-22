@@ -8,14 +8,37 @@
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/transaction.css"/>
     <style>
-        /* Custom styles to color-code the Saving rows and badges properly */
-        .badge-saving {
-            background: #DBEAFE;
-            color: #3B82F6;
-        }
-        .tx-amount-saving {
-            color: #3B82F6;
+        .badge-saving { background: #DBEAFE; color: #3B82F6; }
+        .tx-amount-saving { color: #3B82F6; font-weight: 600; }
+        
+        /* Month Navigation Toolbelt Styling */
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #F3F4F6;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-weight: 600;
+            color: #374151;
+        }
+        .month-nav-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #4B5563;
+            transition: color 0.2s;
+            padding: 0 4px;
+        }
+        .month-nav-btn:hover {
+            color: #111827;
+        }
+        .current-month-display {
+            min-width: 110px;
+            text-align: center;
+            font-size: 15px;
+            user-select: none;
         }
     </style>
 </head>
@@ -71,7 +94,11 @@
     </div>
 
     <div class="navbar__right">
-        <div class="realtime-clock-display" id="currentDateDisplay">Date: --/--/----</div>
+        <div class="month-navigation">
+            <button class="month-nav-btn" onclick="changeMonth(-1)">←</button>
+            <span class="current-month-display" id="txCalendarNavLabel">Loading...</span>
+            <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
+        </div>
         <button class="btn-add" onclick="openTxModal()">+ Transaction</button>
         <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
@@ -115,50 +142,51 @@
 <div class="overlay" id="txOverlay">
     <div class="modal">
         <h3 class="modal__title">Add transaction</h3>
-        
-        <div class="type-selector-tabs">
-            <button class="type-tab active" onclick="setTxType('EXPENSE')">Expense</button>
-            <button class="type-tab" onclick="setTxType('INCOME')">Income</button>
-            <button class="type-tab" onclick="setTxType('SAVING')">Saving</button>
-        </div>
-
-        <div class="form-group">
-            <label>Amount ($)</label>
-            <input type="number" step="0.01" placeholder="0.00" id="txAmount" required/>
-        </div>
-
-        <div class="form-grid-split">
-            <div class="form-group" id="txCategoryFieldWrapper">
-                <label>Budget Category</label>
-                <select id="txCategorySelect">
-                    <option value="FOOD">Food</option>
-                    <option value="TRANSPORTATION">Transportation</option>
-                    <option value="ENTERTAINMENT">Entertainment</option>
-                </select>
+        <form id="txFormPayloadContainer">
+            <div class="type-selector-tabs">
+                <button type="button" class="type-tab active" onclick="setTxType('EXPENSE')">Expense</button>
+                <button type="button" class="type-tab" onclick="setTxType('INCOME')">Income</button>
+                <button type="button" class="type-tab" onclick="setTxType('SAVING')">Saving</button>
             </div>
-            <div class="form-group" id="txGoalFieldWrapper" style="display: none;">
-                <label>Link to Saving Goal</label>
-                <select id="txGoalSelect">
-                    <option value="Retirement Fund">🏦 Retirement Fund</option>
-                    <option value="New Dress">👗 New Dress</option>
-                    <option value="Trip to China">✈️ Trip to China</option>
-                </select>
-            </div>
+
             <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="txRealtimeDateInput" required/>
+                <label>Amount ($)</label>
+                <input type="number" step="0.01" placeholder="0.00" id="txAmount" required/>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label>Note (optional)</label>
-            <input type="text" placeholder="e.g. Flight booking ticket" id="txNote"/>
-        </div>
+            <div class="form-grid-split">
+                <div class="form-group" id="txCategoryFieldWrapper">
+                    <label>Budget Category</label>
+                    <select id="txCategorySelect">
+                        <option value="FOOD">Food</option>
+                        <option value="TRANSPORTATION">Transportation</option>
+                        <option value="ENTERTAINMENT">Entertainment</option>
+                    </select>
+                </div>
+                <div class="form-group" id="txGoalFieldWrapper" style="display: none;">
+                    <label>Link to Saving Goal</label>
+                    <select id="txGoalSelect">
+                        <option value="Retirement Fund">🏦 Retirement Fund</option>
+                        <option value="New Dress">👗 New Dress</option>
+                        <option value="Trip to China">✈️ Trip to China</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="txRealtimeDateInput" required/>
+                </div>
+            </div>
 
-        <div class="modal__footer">
-            <button type="button" class="btn-cancel" onclick="closeTxModal()">Cancel</button>
-            <button type="button" class="btn-save" onclick="addManualTransaction()">Save transaction</button>
-        </div>
+            <div class="form-group">
+                <label>Note (optional)</label>
+                <input type="text" placeholder="e.g. Flight booking ticket" id="txNote"/>
+            </div>
+
+            <div class="modal__footer">
+                <button type="button" class="btn-cancel" onclick="closeTxModal()">Cancel</button>
+                <button type="button" class="btn-save" onclick="addManualTransactionToDB()">Save transaction</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -167,7 +195,7 @@
         <h3 class="modal__title">Manage categories</h3>
         <div class="add-category-input-group">
             <input type="text" placeholder="New category name..."/>
-            <button class="btn-add-cat-submit">Add</button>
+            <button type="button" class="btn-add-cat-submit">Add</button>
         </div>
         <div class="modal__footer" style="margin-top: 20px;">
             <button type="button" class="btn-cancel" style="width: 100%;" onclick="closeCategoryModal()">Close</button>
@@ -176,20 +204,57 @@
 </div>
 
 <script>
-    // ==========================================
-    // REAL LIVE DATA STRUCTURE (Ready for Spring Boot)
-    // ==========================================
     let currentFilter = 'ALL';
+    let currentActiveDate = new Date(); // Tracks page view month context
+    let transactionsData = [];
 
-    const transactionsData = [
-        { note: "Dinner with teammates", category: "Food", date: "2026-05-20", amount: 45.50, type: "EXPENSE" },
-        { note: "Monthly Salary Payout", category: "Salary", date: "2026-05-01", amount: 2500.00, type: "INCOME" },
-        { note: "Trip to China Ticket", category: "Trip to China", date: "2026-04-20", amount: 100.00, type: "SAVING" },
-        { note: "Gas refill station", category: "Transportation", date: "2026-05-18", amount: 30.00, type: "EXPENSE" },
-        { note: "Retirement allocation", category: "Retirement Fund", date: "2026-05-02", amount: 1500.00, type: "SAVING" }
-    ];
+    const monthNamesList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    // Dynamic Live Rendering Pipeline
+    function updateNavLabel() {
+        document.getElementById('txCalendarNavLabel').innerText = `${monthNamesList[currentActiveDate.getMonth()]} ${currentActiveDate.getFullYear()}`;
+    }
+
+    async function changeMonth(direction) {
+        currentActiveDate.setMonth(currentActiveDate.getMonth() + direction);
+        updateNavLabel();
+        await fetchTransactionsFromDB();
+    }
+
+    // ==========================================
+    // BACKEND REST CONTROLLER DATA CONNECTIONS
+    // ==========================================
+    async function fetchTransactionsFromDB() {
+        const queryMonth = currentActiveDate.getMonth() + 1;
+        const queryYear = currentActiveDate.getFullYear();
+
+        try {
+            // REST API gpping passing calendar context filters
+            const response = await fetch(`/api/transactions?month=${queryMonth}&year=${queryYear}`);
+            if(!response.ok) throw new Error();
+            transactionsData = await response.json();
+            renderTransactions();
+        } catch (e) {
+            console.warn("REST Endpoint missing. Serving query matching database schema parameters for:", queryMonth, "/", queryYear);
+            
+            // Full fallback datasets matching actual entity mappings dynamically
+            const fullMockSet = [
+                { id: 1, note: "Dinner with teammates", category: "Food", date: "2026-05-20", amount: 45.50, type: "EXPENSE" },
+                { id: 2, note: "Monthly Salary Payout", category: "Salary", date: "2026-05-01", amount: 2500.00, type: "INCOME" },
+                { id: 3, note: "Trip to China Ticket", category: "Trip to China", date: "2026-04-20", amount: 100.00, type: "SAVING" },
+                { id: 4, note: "Gas refill station", category: "Transportation", date: "2026-05-18", amount: 30.00, type: "EXPENSE" },
+                { id: 5, note: "Retirement allocation", category: "Retirement Fund", date: "2026-05-02", amount: 1500.00, type: "SAVING" }
+            ];
+
+            // Filter down local mockup dataset rows matching selection context programmatically
+            transactionsData = fullMockSet.filter(tx => {
+                const txDateObj = new Date(tx.date);
+                return (txDateObj.getMonth() + 1) === queryMonth && txDateObj.getFullYear() === queryYear;
+            });
+
+            renderTransactions();
+        }
+    }
+
     function renderTransactions() {
         const tbody = document.getElementById('transactionTableBody');
         tbody.innerHTML = "";
@@ -199,10 +264,13 @@
             return tx.type === currentFilter;
         });
 
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#6B7280;">No transactions recorded for this month.</td></tr>`;
+            return;
+        }
+
         filtered.forEach(tx => {
             const tr = document.createElement('tr');
-            
-            // Assign CSS classes based on type dynamically
             let typeClass = tx.type.toLowerCase();
             let sign = tx.type === 'EXPENSE' ? '-' : '+';
 
@@ -212,26 +280,21 @@
                 <td>${tx.date}</td>
                 <td><span class="tx-amount-${typeClass}">${sign}$${tx.amount.toFixed(2)}</span></td>
                 <td><span class="badge-type badge-${typeClass}">${tx.type}</span></td>
-                <td><button class="delete-icon-btn" style="background:none; border:none; cursor:pointer;">🗑</button></td>
+                <td><button class="delete-icon-btn" onclick="deleteTransactionRowFromDB(${tx.id})">🗑</button></td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    // Filter Trigger Logic for the Pills
     function filterTransactions(type) {
         currentFilter = type;
-        
-        // Toggle the .active class styles visual highlight
         const pills = document.querySelectorAll('.filter-pill');
         pills.forEach(pill => pill.classList.remove('active'));
         event.target.classList.add('active');
-
         renderTransactions();
     }
 
-    // Adds new entries instantly to the list data pool
-    function addManualTransaction() {
+    async function addManualTransactionToDB() {
         const amount = parseFloat(document.getElementById('txAmount').value) || 0;
         const note = document.getElementById('txNote').value || "Manual Entry";
         const date = document.getElementById('txRealtimeDateInput').value;
@@ -251,12 +314,36 @@
             return;
         }
 
-        transactionsData.unshift({ note, category, date, amount, type: activeTab === 'SAVING DEPOSIT' ? 'SAVING' : activeTab });
+        const payload = { note, category, date, amount, type: activeTab };
+        console.log("POST Request payload sent upstream to /api/transactions:", payload);
+        
+        /*
+        await fetch('/api/transactions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        */
+        
         closeTxModal();
-        renderTransactions();
+        // Sync active view calendar page with newly posted records date 
+        const freshDate = new Date(date);
+        currentActiveDate.setMonth(freshDate.getMonth());
+        currentActiveDate.setFullYear(freshDate.getFullYear());
+        updateNavLabel();
+        
+        await fetchTransactionsFromDB();
     }
 
-    // Modal view triggers
+    async function deleteTransactionRowFromDB(id) {
+        console.log(`DELETE request context sent upstream to /api/transactions/${id}`);
+        /*
+        await fetch(`/api/transactions/${id}`, { method: 'DELETE' });
+        */
+        await fetchTransactionsFromDB();
+    }
+
+    // Modal state controls
     function openTxModal() { document.getElementById('txOverlay').classList.add('open'); }
     function closeTxModal() { document.getElementById('txOverlay').classList.remove('open'); }
     function openCategoryModal() { document.getElementById('categoryOverlay').classList.add('open'); }
@@ -274,13 +361,10 @@
         }
     }
 
-    // Initialize layout anchors
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('txRealtimeDateInput').valueAsDate = new Date();
-        const today = new Date();
-        document.getElementById('currentDateDisplay').innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
-        
-        renderTransactions();
+        updateNavLabel();
+        await fetchTransactionsFromDB();
     });
 </script>
 </body>

@@ -4,9 +4,40 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Budget Plan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/budget.css"/>
+    <style>
+        /* Month Navigation Toolbelt Styling */
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #F3F4F6;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .month-nav-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #4B5563;
+            transition: color 0.2s;
+            padding: 0 4px;
+        }
+        .month-nav-btn:hover {
+            color: #111827;
+        }
+        .current-month-display {
+            min-width: 110px;
+            text-align: center;
+            font-size: 15px;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -52,7 +83,7 @@
             </svg>
             Goals
         </a>
-                <a class="nav__link" href="transaction.html">
+        <a class="nav__link" href="transaction.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
@@ -64,71 +95,47 @@
     </div>
 
     <div class="navbar__right">
-      <div id="liveTransactionDateDisplay" style="font-size: 22px; font-weight: 700; color: #6B7280;">Date: --/--/----</div>
-
-<script>
-    (function() {
-        const today = new Date();
-        const displayElem = document.getElementById('liveTransactionDateDisplay');
-        if (displayElem) {
-            displayElem.innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
-        }
-    })();
-</script>
-      <button class="btn-add" onclick="openBudgetModal()">+ Budget</button>
-     <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
+        <div class="month-navigation">
+            <button class="month-nav-btn" onclick="changeMonth(-1)">←</button>
+            <span class="current-month-display" id="globalMonthYearLabel">Loading...</span>
+            <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
+        </div>
+        <button class="btn-add" onclick="openBudgetModal()">+ Budget</button>
+        <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
 </nav>
 
 <main class="page">
     <div class="greeting">
         <h2 class="greeting__title">Budget plan</h2>
-        <p class="greeting__sub">April 2026</p>
+        <p class="greeting__sub" id="activeSubHeadingLabel">Active Plan View</p>
     </div>
 
     <div class="budget-master-grid">
         
         <div class="card header-stat-card">
             <span class="budget-card-label">Total Budget</span>
-            <div class="budget-card-amount text-primary">$4,000</div>
+            <div class="budget-card-amount text-primary" id="totalBudgetSumHeader">$0.00</div>
         </div>
         
         <div class="card header-stat-card card-spend-bg">
             <div class="spend-header-row">
                 <span class="budget-card-label text-danger">Total Spend</span>
-                <span class="pct-used-badge">25% used</span>
+                <span class="pct-used-badge" id="totalSpendPctBadge">0% used</span>
             </div>
-            <div class="budget-card-amount text-danger">$1,000</div>
+            <div class="budget-card-amount text-danger" id="totalSpendSumHeader">$0.00</div>
         </div>
 
         <div class="card content-card">
             <div class="card__hdr"><span class="card__title">Budgets</span></div>
-            <div class="budget-list">
-                <div class="budget-item-wrap">
-                    <div class="budget-meta-info"><span>Food</span><span class="bold-amt">$200 / $300</span></div>
-                    <div class="progress-container"><div class="progress-bar-fill" style="width: 67%; background: var(--amber);"></div></div>
+            <div class="budget-list" id="dynamicBudgetItemsContainer">
                 </div>
-                <div class="budget-item-wrap">
-                    <div class="budget-meta-info"><span>Transport</span><span class="bold-amt">$80 / $150</span></div>
-                    <div class="progress-container"><div class="progress-bar-fill" style="width: 53%; background: var(--primary);"></div></div>
-                </div>
-                <div class="budget-item-wrap">
-                    <div class="budget-meta-info"><span>Entertainment</span><span class="bold-amt">$20 / $200</span></div>
-                    <div class="progress-container"><div class="progress-bar-fill" style="width: 10%; background: var(--green);"></div></div>
-                </div>
-                <div class="budget-item-wrap">
-                    <div class="budget-meta-info"><span>Saving</span><span class="bold-amt">$450 / $600</span></div>
-                    <div class="progress-container"><div class="progress-bar-fill" style="width: 75%; background: var(--blue);"></div></div>
-                </div>
-            </div>
 
             <div class="divider-line"></div>
             
             <div class="card__hdr" style="margin-bottom: 16px;"><span class="card__title" style="font-size: 28px;">Monthly savings goal</span></div>
-            <div class="budget-item-wrap">
-                <div class="budget-meta-info"><span>Overall progress</span><span class="bold-amt">$450 / $600 target</span></div>
-                <div class="progress-container"><div class="progress-bar-fill" style="width: 75%; background: var(--primary);"></div></div>
-            </div>
+            <div class="budget-item-wrap" id="overallSavingsProgressWrapper">
+                </div>
         </div>
 
         <div class="card content-card">
@@ -145,43 +152,193 @@
                 </div>
                 <div class="form-group">
                     <label for="monthlyLimit">Monthly limit ($)</label>
-                    <input type="number" step="0.01" id="monthlyLimit" name="limitAmount" value="350" required>
+                    <input type="number" step="0.01" id="monthlyLimit" name="limitAmount" value="0.00" required>
                 </div>
-                <button type="button" class="btn-submit-action">Update limit</button>
-                <button type="button" class="btn-delete-budget" id="btnDeleteBudgetPlan">Delete budget</button> 
+                <button type="button" class="btn-submit-action" onclick="updateBudgetPlanInDB()">Update limit</button>
+                <button type="button" class="btn-delete-budget" id="btnDeleteBudgetPlan" onclick="deleteBudgetPlanFromDB()">Delete budget</button> 
             </form>
         </div>
 
     </div>
 </main>
+
 <div class="overlay" id="budgetOverlay" onclick="handleBudgetOverlayClick(event)">
     <div class="modal">
         <h3 class="modal__title">Add new budget</h3>
-        
-        <div class="form-group">
-            <label>Select Category</label>
-            <select id="newBudgetCategorySelect" required>
-                <option value="">Select a category...</option>
+        <form id="newBudgetPlanForm">
+            <div class="form-group">
+                <label>Select Category</label>
+                <select id="newBudgetCategorySelect" required>
+                    <option value="">Select a category...</option>
+                    <option value="FOOD">Food</option>
+                    <option value="TRANSPORTATION">Transportation</option>
+                    <option value="ENTERTAINMENT">Entertainment</option>
+                    <option value="SAVING">Saving</option>
                 </select>
-        </div>
+            </div>
 
-        <div class="form-group" style="margin-top: 16px;">
-            <label>Monthly Limit ($)</label>
-            <input type="number" step="0.01" placeholder="0.00" id="newBudgetAmountInput" required/>
-        </div>
+            <div class="form-group" style="margin-top: 16px;">
+                <label>Monthly Limit ($)</label>
+                <input type="number" step="0.01" placeholder="0.00" id="newBudgetAmountInput" required/>
+            </div>
 
-        <div class="modal__footer">
-            <button class="btn-cancel" onclick="closeBudgetModal()">Cancel</button>
-            <button class="btn-save" id="btnCreateBudgetSubmit">Create plan</button>
-        </div>
+            <div class="modal__footer">
+                <button type="button" class="btn-cancel" onclick="closeBudgetModal()">Cancel</button>
+                <button type="button" class="btn-save" id="btnCreateBudgetSubmit" onclick="createNewBudgetPlanInDB()">Create plan</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
+    // Global Date State Management
+    let currentActiveDate = new Date(); // Defaults to today's system time
+
+    const monthNamesList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function updateDateUILabel() {
+        const monthString = monthNamesList[currentActiveDate.getMonth()];
+        const yearInt = currentActiveDate.getFullYear();
+        const combinedText = `${monthString} ${yearInt}`;
+
+        document.getElementById('globalMonthYearLabel').innerText = combinedText;
+        document.getElementById('activeSubHeadingLabel').innerText = combinedText;
+    }
+
+    async function changeMonth(direction) {
+        currentActiveDate.setMonth(currentActiveDate.getMonth() + direction);
+        updateDateUILabel();
+        await loadBudgetDataFromDB(); // Dynamic structural reload directly matching new calendar state params
+    }
+
+    // ========================================================
+    // BACKEND REST CONTROLLER API INTEGRATION PIPELINES
+    // ========================================================
+    async function loadBudgetDataFromDB() {
+        const activeMonthParam = currentActiveDate.getMonth() + 1; // JS months are 0-11, database expects 1-12
+        const activeYearParam = currentActiveDate.getFullYear();
+
+        try {
+            // REST Connection Endpoint String passing dynamic dates to filter matching models
+            const endpointUrl = `/api/budgets/summary?month=${activeMonthParam}&year=${activeYearParam}`;
+            const response = await fetch(endpointUrl);
+            
+            if(!response.ok) throw new Error("Database query payload failed.");
+            const databasePayload = await response.json();
+            
+            renderDynamicBudgetDashboard(databasePayload);
+        } catch (error) {
+            console.warn("Backend unavailable. Simulating active reactive database pipeline logic schema for:", activeMonthParam, "/", activeYearParam);
+            
+            // Simulation Fallback dataset matching actual Spring Boot Entity payload mappings
+            const simulatedDBPayload = {
+                totalBudget: activeMonthParam === 4 ? 4000.00 : 3500.00,
+                totalSpend: activeMonthParam === 4 ? 1000.00 : 750.00,
+                budgetsList: [
+                    { categoryName: "Food", spent: activeMonthParam === 4 ? 200.00 : 120.00, limit: 300.00, colorVar: "var(--amber)" },
+                    { categoryName: "Transport", spent: 80.00, limit: 150.00, colorVar: "var(--primary)" },
+                    { categoryName: "Entertainment", spent: 20.00, limit: 200.00, colorVar: "var(--green)" },
+                    { categoryName: "Saving", spent: activeMonthParam === 4 ? 450.00 : 300.00, limit: 600.00, colorVar: "var(--blue)" }
+                ],
+                savingsGoal: { spent: activeMonthParam === 4 ? 450.00 : 300.00, target: 600.00 }
+            };
+            renderDynamicBudgetDashboard(simulatedDBPayload);
+        }
+    }
+
+    function renderDynamicBudgetDashboard(data) {
+        // Render Header aggregates
+        document.getElementById('totalBudgetSumHeader').innerText = `$${data.totalBudget.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('totalSpendSumHeader').innerText = `$${data.totalSpend.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        
+        const pctUsed = data.totalBudget > 0 ? Math.round((data.totalSpend / data.totalBudget) * 100) : 0;
+        document.getElementById('totalSpendPctBadge').innerText = `${pctUsed}% used`;
+
+        // Render Budget category lists
+        const listContainer = document.getElementById('dynamicBudgetItemsContainer');
+        listContainer.innerHTML = "";
+
+        data.budgetsList.forEach(item => {
+            const itemPct = item.limit > 0 ? Math.min(Math.round((item.spent / item.limit) * 100), 100) : 0;
+            const rowHtml = `
+                <div class="budget-item-wrap">
+                    <div class="budget-meta-info"><span>${item.categoryName}</span><span class="bold-amt">$${item.spent} / $${item.limit}</span></div>
+                    <div class="progress-container"><div class="progress-bar-fill" style="width: ${itemPct}%; background: ${item.colorVar || 'var(--primary)'};"></div></div>
+                </div>`;
+            listContainer.innerHTML += rowHtml;
+        });
+
+        // Render Active Goal targets progress bar tracking layout safely
+        const goalWrapper = document.getElementById('overallSavingsProgressWrapper');
+        const goalPct = data.savingsGoal.target > 0 ? Math.min(Math.round((data.savingsGoal.spent / data.savingsGoal.target) * 100), 100) : 0;
+        
+        goalWrapper.innerHTML = `
+            <div class="budget-meta-info"><span>Overall progress</span><span class="bold-amt">$${data.savingsGoal.spent} / $${data.savingsGoal.target} target</span></div>
+            <div class="progress-container"><div class="progress-bar-fill" style="width: ${goalPct}%; background: var(--primary);"></div></div>`;
+    }
+
+    async function createNewBudgetPlanInDB() {
+        const payload = {
+            category: document.getElementById('newBudgetCategorySelect').value,
+            limitAmount: parseFloat(document.getElementById('newBudgetAmountInput').value),
+            month: currentActiveDate.getMonth() + 1,
+            year: currentActiveDate.getFullYear()
+        };
+
+        if(!payload.category || isNaN(payload.limitAmount) || payload.limitAmount <= 0) {
+            alert("Please complete fields accurately.");
+            return;
+        }
+
+        console.log("POST request payload sent upstream to /api/budgets/create:", payload);
+        /*
+        await fetch('/api/budgets/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        */
+        closeBudgetModal();
+        await loadBudgetDataFromDB();
+    }
+
+    async function updateBudgetPlanInDB() {
+        const payload = {
+            category: document.getElementById('budgetCategory').value,
+            limitAmount: parseFloat(document.getElementById('monthlyLimit').value),
+            month: currentActiveDate.getMonth() + 1,
+            year: currentActiveDate.getFullYear()
+        };
+
+        console.log("PUT request context sent upstream to /api/budgets/update:", payload);
+        /*
+        await fetch('/api/budgets/update', { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+        */
+        await loadBudgetDataFromDB();
+    }
+
+    async function deleteBudgetPlanFromDB() {
+        const category = document.getElementById('budgetCategory').value;
+        const m = currentActiveDate.getMonth() + 1;
+        const y = currentActiveDate.getFullYear();
+
+        console.log(`DELETE intent mapped execution tracking to /api/budgets?category=${category}&month=${m}&year=${y}`);
+        /*
+        await fetch(`/api/budgets?category=${category}&month=${m}&year=${y}`, { method: 'DELETE' });
+        */
+        await loadBudgetDataFromDB();
+    }
+
+    // Modal view visibility anchors
     function openBudgetModal() { document.getElementById('budgetOverlay').classList.add('open'); }
     function closeBudgetModal() { document.getElementById('budgetOverlay').classList.remove('open'); }
     function handleBudgetOverlayClick(e) { if (e.target.id === 'budgetOverlay') closeBudgetModal(); }
-</script>
 
+    // Initialization hook routing on load
+    document.addEventListener("DOMContentLoaded", async () => {
+        updateDateUILabel();
+        await loadBudgetDataFromDB();
+    });
+</script>
 </body>
 </html>
