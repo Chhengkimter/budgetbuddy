@@ -124,4 +124,82 @@ select:focus {
 .btn-primary-action:hover {
     background-color: var(--primary-hover);
 }
+/* ==========================================================================
+   ADDED SYSTEM CONTROLS FOR CHECKBOXES & AUTO-SAVE INTERACTION RULES
+   ========================================================================== */
 
+.checkbox-wrapper {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 44px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-muted);
+    user-select: none;
+    line-height: 1.4;
+    transition: color 0.15s ease;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Custom interactive checkbox design */
+.custom-checkmark {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 28px;
+    width: 28px;
+    background-color: var(--card-bg);
+    border: 2.5px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.15s ease-in-out;
+}
+
+.checkbox-container:hover input ~ .custom-checkmark {
+    border-color: var(--primary-color);
+    background-color: #F8FAFC;
+}
+
+.checkbox-container input:checked ~ .custom-checkmark {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Checkmark glyph vector */
+.custom-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .custom-checkmark:after {
+    display: block;
+}
+
+.checkbox-container .custom-checkmark:after {
+    left: 8px;
+    top: 3px;
+    width: 7px;
+    height: 14px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-container input:checked {
+    color: var(--text-main);
+}

@@ -138,17 +138,12 @@
                 </div>
         </div>
 
-        <div class="card content-card">
+<div class="card content-card">
             <div class="card__hdr"><span class="card__title">Edit budget limit</span></div>
             <form id="budgetLimitForm">
                 <div class="form-group">
-                    <label for="budgetCategory">Category</label>
-                    <select id="budgetCategory" name="category" required>
-                        <option value="FOOD">Food</option>
-                        <option value="TRANSPORTATION">Transportation</option>
-                        <option value="ENTERTAINMENT">Entertainment</option>
-                        <option value="SAVING">Saving</option>
-                    </select>
+                    <label for="budgetCategory">Budget Name</label>
+                    <input type="text" id="budgetCategory" name="category" placeholder="e.g. Food, Trip, Clothes" required>
                 </div>
                 <div class="form-group">
                     <label for="monthlyLimit">Monthly limit ($)</label>
@@ -167,14 +162,8 @@
         <h3 class="modal__title">Add new budget</h3>
         <form id="newBudgetPlanForm">
             <div class="form-group">
-                <label>Select Category</label>
-                <select id="newBudgetCategorySelect" required>
-                    <option value="">Select a category...</option>
-                    <option value="FOOD">Food</option>
-                    <option value="TRANSPORTATION">Transportation</option>
-                    <option value="ENTERTAINMENT">Entertainment</option>
-                    <option value="SAVING">Saving</option>
-                </select>
+                <label for="newBudgetCategorySelect">Budget Name</label>
+                <input type="text" id="newBudgetCategorySelect" placeholder="Enter budget title..." required>
             </div>
 
             <div class="form-group" style="margin-top: 16px;">
