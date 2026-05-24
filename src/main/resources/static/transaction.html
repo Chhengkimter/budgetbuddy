@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Transactions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/transaction.css"/>
 </head>
@@ -14,11 +14,7 @@
     <div class="navbar__logo">
         <div class="navbar__logo-icon">
             <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0
-                       1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12
-                       c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182
-                       s2.9-.879 4.006 0l.415.33"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33"/>
             </svg>
         </div>
         <span class="navbar__logo-name">Budget Buddy</span>
@@ -34,44 +30,34 @@
             </svg>
             Dashboard
         </a>
-        <a class="nav__link active" href="transaction.html">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
-                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
-                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Transactions
-        </a>
         <a class="nav__link" href="budget.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2
-                       a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10
-                       m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2
-                       a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
             Budget
         </a>
         <a class="nav__link" href="goals.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12
-                       l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
             </svg>
             Goals
+        </a>
+        <a class="nav__link active" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
         </a>
     </div>
 
     <div class="navbar__right">
-        <span class="navbar__period">April 2026</span>
-        <button class="btn-add" onclick="openModal()">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-            </svg>
-            Add Transaction
-        </button>
-        <div class="navbar__avatar">MK</div>
+        <div class="month-navigation">
+            <button class="month-nav-btn" onclick="changeMonth(-1)">←</button>
+            <span id="txCalendarNavLabel">Loading...</span>
+            <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
+        </div>
+        <button class="btn-add" onclick="openTxModal()">+ Transaction</button>
+        <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
 </nav>
 
@@ -82,164 +68,276 @@
     </div>
 
     <div class="filter-row">
-        <button class="filter-pill active">All</button>
-        <button class="filter-pill">Food</button>
-        <button class="filter-pill">Transport</button>
-        <button class="filter-pill">Housing</button>
-        <button class="filter-pill">Saving</button>
-        <button class="filter-pill">Income</button>
+        <button class="filter-pill active" onclick="filterTransactions('ALL')">All</button>
+        <button class="filter-pill" onclick="filterTransactions('INCOME')">Income</button>
+        <button class="filter-pill" onclick="filterTransactions('EXPENSE')">Expense</button>
+        <button class="filter-pill" onclick="filterTransactions('SAVING')">Saving</button>
     </div>
 
-    <div class="search-row">
-        <input type="text" class="search-input" id="tableSearch" placeholder="Search by name or note...">
-        <select class="date-select" id="monthFilter">
-            <option value="2026-04">Apr 2026</option>
-            <option value="2026-03">Mar 2026</option>
-        </select>
-    </div>
-
-    <div class="table-card">
+    <div class="card table-card">
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                    <th>Action</th>
+                    <th>NAME</th>
+                    <th>DATE</th>
+                    <th>AMOUNT</th>
+                    <th>TYPE</th>
+                    <th>BUDGET</th>
+                    <th>GOAL</th>
+                    <th>NOTE</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="tx-title">Coconut Water</div>
-                        <div class="tx-note">Party snack</div>
-                    </td>
-                    <td><span class="pill pill-blue">Food</span></td>
-                    <td class="tx-date">Apr 20</td>
-                    <td class="amount text-red">-$1.05</td>
-                    <td><span class="type-tag tag-expense">Expense</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn" title="Edit">✏</button>
-                            <button class="action-btn delete-btn" title="Delete">🗑</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><div class="tx-title">Goal – New Dress</div></td>
-                    <td><span class="pill pill-green">Saving</span></td>
-                    <td class="tx-date">Apr 19</td>
-                    <td class="amount text-red">-$100.00</td>
-                    <td><span class="type-tag tag-saving">Saving</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn">✏</button>
-                            <button class="action-btn delete-btn">🗑</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><div class="tx-title">Salary</div></td>
-                    <td><span class="pill pill-green">Income</span></td>
-                    <td class="tx-date">Apr 02</td>
-                    <td class="amount text-green">+$2,300.00</td>
-                    <td><span class="type-tag tag-income">Income</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn">✏</button>
-                            <button class="action-btn delete-btn">🗑</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
+            <tbody id="transactionTableBody"></tbody>
         </table>
     </div>
 </main>
 
-<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+<div class="overlay" id="txOverlay" onclick="handleTxOverlayClick(event)">
     <div class="modal">
-        <div class="modal__hdr">
-            <div>
-                <div class="modal__title">Add transaction</div>
-                <div class="modal__sub">Record income, expense, or saving deposit</div>
-            </div>
-            <button class="modal__close" onclick="closeModal()">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
+        <h3 class="modal__title">Add transaction</h3>
         <form id="addTransactionForm">
+            
             <div class="type-tabs">
-                <button type="button" class="type-tab active" onclick="setType(this, 'EXPENSE')">Expense</button>
-                <button type="button" class="type-tab" onclick="setType(this, 'INCOME')">Income</button>
-                <button type="button" class="type-tab" onclick="setType(this, 'SAVING')">Saving dep.</button>
+                <button type="button" class="type-tab active" id="modalTabExpense" onclick="setModalTxType('EXPENSE')">Expense</button>
+                <button type="button" class="type-tab" id="modalTabIncome" onclick="setModalTxType('INCOME')">Income</button>
+                <button type="button" class="type-tab" id="modalTabSaving" onclick="setModalTxType('SAVING')">Saving</button>
             </div>
             
-            <input type="hidden" id="transactionType" name="type" value="EXPENSE">
+            <input type="hidden" id="modalTxTypeTracker" value="EXPENSE" />
 
-            <div class="modal__amount-wrap">
-                <label class="modal__amount-label">Amount ($)</label>
-                <input class="modal__amount-input" type="number" step="0.01" id="amount" name="amount" placeholder="0.00" value="0.00" required/>
+            <div class="form-group">
+                <label>Transaction Title</label>
+                <input type="text" placeholder="e.g. Walmart Grocery Run" id="txTitleInput" required/>
             </div>
-
-            <div class="modal__form-row">
+            
+            <div class="form-row-2">
                 <div class="form-group">
-                    <label>Category</label>
-                    <select id="category" name="category" required>
-                        <option value="FOOD">Food</option>
-                        <option value="TRANSPORTATION">Transportation</option>
-                        <option value="HOUSING">Housing</option>
-                        <option value="ENTERTAINMENT">Entertainment</option>
-                        <option value="HEALTH">Health</option>
-                    </select>
+                    <label>Amount ($)</label>
+                    <input type="number" step="0.01" placeholder="0.00" id="txAmountInput" required/>
                 </div>
                 <div class="form-group">
                     <label>Date</label>
-                    <input type="date" id="date" name="date" required/>
+                    <input type="date" id="txRealtimeDateInput" required/>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Note (optional)</label>
-                <input type="text" id="note" name="note" placeholder="e.g. Party at Anna's house"/>
-            </div>
+            <div id="modalDynamicFieldsWrapper">
+                </div>
 
             <div class="form-group">
-                <label>Link to saving goal (optional)</label>
-                <select id="savingGoal" name="savingGoalId">
-                    <option value="">none</option>
-                    <option value="1">Retirement Fund</option>
-                    <option value="2">New Dress</option>
-                    <option value="3">Health Fund</option>
-                </select>
+                <label>Note</label>
+                <input type="text" placeholder="Optional descriptions..." id="txNoteInput"/>
+            </div>
+
+            <div id="modalAutoSaveFeatureWrapper" style="display: none; margin-top: 15px;">
+                <label class="modal-checkbox-container">
+                    <input type="checkbox" id="txAutoSaveRecurring">
+                    <span class="modal-custom-checkmark"></span>
+                    Automatically save this transaction when a new month arrives
+                </label>
             </div>
 
             <div class="modal__footer">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="button" class="btn-save" onclick="closeModal()">Save transaction</button>
+                <button type="button" class="btn-cancel" onclick="closeTxModal()">Cancel</button>
+                <button type="submit" class="btn-save">Save transaction</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    function openModal()  { document.getElementById('overlay').classList.add('open'); }
-    function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-    function handleOverlayClick(e) { if (e.target.id === 'overlay') closeModal(); }
-    
-    function setType(btn, typeValue) {
-        document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('transactionType').value = typeValue;
+    let currentFilter = 'ALL';
+    let currentActiveDate = new Date();
+    let transactionsData = [];
+
+    const monthNamesList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // Options sourced precisely to link with your Goal page structures
+    const dbOptionsSource = {
+        BUDGETS: [
+            { value: "FOOD", text: "Food & Groceries" },
+            { value: "TRANSPORTATION", text: "Transportation" },
+            { value: "ENTERTAINMENT", text: "Entertainment" },
+            { value: "UTILITIES", text: "Utilities & Bills" }
+        ],
+        MONTHLY_SAVING_OPTIONS: [
+            { value: "MONTHLY_GOAL", text: "Monthly Saving Goal" }
+        ],
+        SMALL_SAVING_GOALS: [
+            { value: "NEW_LAPTOP", text: "New Laptop Fund" },
+            { value: "TRAVEL", text: "China Trip Fund" }
+        ]
+    };
+
+    function updateNavLabel() {
+        document.getElementById('txCalendarNavLabel').innerText = `${monthNamesList[currentActiveDate.getMonth()]} ${currentActiveDate.getFullYear()}`;
     }
 
-    // Default target date instantiation
-    document.getElementById('date').valueAsDate = new Date();
-</script>
+    async function changeMonth(direction) {
+        currentActiveDate.setMonth(currentActiveDate.getMonth() + direction);
+        updateNavLabel();
+        await fetchTransactionsFromDB();
+    }
 
+    async function fetchTransactionsFromDB() {
+        const queryMonth = currentActiveDate.getMonth() + 1;
+        const queryYear = currentActiveDate.getFullYear();
+
+        try {
+            const response = await fetch(`/api/transactions?month=${queryMonth}&year=${queryYear}`);
+            if(!response.ok) throw new Error();
+            transactionsData = await response.json();
+            renderTransactions();
+        } catch (e) {
+            // Mock Data matching your new layout spec rules
+            transactionsData = [
+                { id: 1, name: "Salary Payout", date: "2026-05-01", amount: 2500.00, type: "INCOME", budget: "—", goal: "—", note: "Primary Job Payment" },
+                { id: 2, name: "Grocery Run", date: "2026-05-12", amount: 45.50, type: "EXPENSE", budget: "Food & Groceries", goal: "—", note: "Weekly dinner ingredients" },
+                { id: 3, name: "Reserve allocation", date: "2026-05-15", amount: 300.00, type: "SAVING", budget: "Monthly Saving Goal", goal: "New Laptop Fund", note: "Automated deposit" }
+            ];
+            renderTransactions();
+        }
+    }
+
+    function renderTransactions() {
+        const tbody = document.getElementById('transactionTableBody');
+        tbody.innerHTML = "";
+
+        const filtered = transactionsData.filter(tx => currentFilter === 'ALL' || tx.type === currentFilter);
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-table-msg">No transaction records found.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(tx => {
+            const tr = document.createElement('tr');
+            let typeClass = tx.type.toLowerCase();
+            let sign = tx.type === 'EXPENSE' ? '-' : '+';
+            
+            tr.innerHTML = `
+                <td><strong>${tx.name}</strong></td>
+                <td>${tx.date}</td>
+                <td><span class="tx-amount-${typeClass}">${sign}$${tx.amount.toFixed(2)}</span></td>
+                <td><span class="type-tag tag-${typeClass}">${tx.type}</span></td>
+                <td><span class="column-meta-text">${tx.budget || '—'}</span></td>
+                <td><span class="column-meta-text">${tx.goal || '—'}</span></td>
+                <td class="column-note-text">${tx.note || '—'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterTransactions(type) {
+        currentFilter = type;
+        const pills = document.querySelectorAll('.filter-pill');
+        pills.forEach(pill => pill.classList.remove('active'));
+        event.target.classList.add('active');
+        renderTransactions();
+    }
+
+    // Modal view visibility controls
+    function openTxModal() { document.getElementById('txOverlay').classList.add('open'); }
+    function closeTxModal() { document.getElementById('txOverlay').classList.remove('open'); }
+    function handleTxOverlayClick(e) { if(e.target.id === 'txOverlay') closeTxModal(); }
+    
+    // Smoothly handles rendering correct options into the dynamic wrapper inside the modal
+    function setModalTxType(type) {
+        document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+        document.getElementById('modalTxTypeTracker').value = type;
+
+        if(type === 'EXPENSE') document.getElementById('modalTabExpense').classList.add('active');
+        if(type === 'INCOME') document.getElementById('modalTabIncome').classList.add('active');
+        if(type === 'SAVING') document.getElementById('modalTabSaving').classList.add('active');
+
+        const fieldsWrapper = document.getElementById('modalDynamicFieldsWrapper');
+        const autoSaveWrapper = document.getElementById('modalAutoSaveFeatureWrapper');
+        fieldsWrapper.innerHTML = "";
+
+        if (type === 'EXPENSE') {
+            autoSaveWrapper.style.display = "block";
+            fieldsWrapper.innerHTML = `
+                <div class="form-group">
+                    <label>Link to Budget</label>
+                    <select id="txBudgetSelect" required></select>
+                </div>
+            `;
+            const sel = document.getElementById('txBudgetSelect');
+            dbOptionsSource.BUDGETS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                sel.appendChild(el);
+            });
+        } 
+        else if (type === 'INCOME') {
+            autoSaveWrapper.style.display = "block";
+            // Income completely hides the drop-down fields wrapper row
+        } 
+        else if (type === 'SAVING') {
+            autoSaveWrapper.style.display = "block";
+            fieldsWrapper.innerHTML = `
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Link to Monthly Saving</label>
+                        <select id="txMonthlySavingSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Goal</label>
+                        <select id="txSmallGoalSelect" required></select>
+                    </div>
+                </div>
+            `;
+            
+            const mSel = document.getElementById('txMonthlySavingSelect');
+            dbOptionsSource.MONTHLY_SAVING_OPTIONS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                mSel.appendChild(el);
+            });
+
+            const sSel = document.getElementById('txSmallGoalSelect');
+            dbOptionsSource.SMALL_SAVING_GOALS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                sSel.appendChild(el);
+            });
+        }
+    }
+
+    // Capture and pack popup input form packages
+    document.getElementById('addTransactionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const txType = document.getElementById('modalTxTypeTracker').value;
+        const payload = {
+            name: document.getElementById('txTitleInput').value,
+            amount: parseFloat(document.getElementById('txAmountInput').value),
+            date: document.getElementById('txRealtimeDateInput').value,
+            type: txType,
+            note: document.getElementById('txNoteInput').value,
+            
+            budget: txType === 'EXPENSE' ? document.getElementById('txBudgetSelect').value : null,
+            monthlySavingGoal: txType === 'SAVING' ? document.getElementById('txMonthlySavingSelect').value : null,
+            smallSavingGoal: txType === 'SAVING' ? document.getElementById('txSmallGoalSelect').value : null,
+            autoSave: txType === 'SAVING' ? document.getElementById('txAutoSaveRecurring').checked : false
+        };
+
+        console.log("Submitting transaction payload data tracking unit:", payload);
+        
+        closeTxModal();
+        await fetchTransactionsFromDB();
+    });
+
+    // Consolidated execution launcher sequence
+    document.addEventListener("DOMContentLoaded", async () => {
+        document.getElementById('txRealtimeDateInput').valueAsDate = new Date();
+        updateNavLabel();
+        setModalTxType('EXPENSE'); // Sets default popup state
+        await fetchTransactionsFromDB();
+    });
+</script>
 </body>
 </html>

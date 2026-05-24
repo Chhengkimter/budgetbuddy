@@ -4,8 +4,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Add Transaction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="css/login.css"> <link rel="stylesheet" href="css/add_transaction.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/login.css"> 
+    <link rel="stylesheet" href="css/add_transaction.css"/>
 </head>
 <body>
 
@@ -22,73 +23,173 @@
     <form id="addTransactionForm">
         
         <div class="type-tabs-container">
-            <button type="button" class="tab-option active" onclick="setTransactionType('EXPENSE')">Expense</button>
-            <button type="button" class="tab-option" onclick="setTransactionType('INCOME')">Income</button>
-            <button type="button" class="tab-option" onclick="setTransactionType('SAVING')">Saving dep.</button>
-        </div>
-        
-        <input type="hidden" id="transactionType" name="type" value="EXPENSE">
-
-        <div class="form-group giant-amount-field">
-            <label for="amount">Amount ($)</label>
-            <input type="number" step="0.01" id="amount" name="amount" placeholder="0.00" required>
+            <button type="button" class="tab-option active" id="tabExpense" onclick="setTransactionType('EXPENSE')">Expense</button>
+            <button type="button" class="tab-option" id="tabIncome" onclick="setTransactionType('INCOME')">Income</button>
+            <button type="button" class="tab-option" id="tabSaving" onclick="setTransactionType('SAVING')">Saving</button>
         </div>
 
-        <div class="form-row">
+        <input type="hidden" id="transactionType" value="EXPENSE">
+
+        <div class="form-group">
+            <label class="form-label-text">Transaction Title</label>
+            <input type="text" class="input-field" placeholder="e.g. Walmart Grocery Run" id="title" required/>
+        </div>
+
+        <div class="form-row-layout">
             <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" name="category" required>
-                    <option value="FOOD">Food</option>
-                    <option value="TRANSPORTATION">Transportation</option>
-                    <option value="HOUSING">Housing</option>
-                    <option value="ENTERTAINMENT">Entertainment</option>
-                    <option value="HEALTH">Health</option>
+                <label class="form-label-text">Amount ($)</label>
+                <input type="number" step="0.01" class="input-field" placeholder="0.00" id="amount" required/>
+            </div>
+            <div class="form-group">
+                <label class="form-label-text">Date</label>
+                <input type="date" class="input-field" id="date" required/>
+            </div>
+        </div>
+
+        <div class="form-group" id="dynamicCategoryWrapper">
+            <label class="form-label-text" id="categoryLabel">Link to Budget</label>
+            <select id="category">
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
-            </div>
+        </div>
+
+        <div class="form-group" id="savingGoalWrapper" style="display: none;">
+            <label class="form-label-text" id="savingGoalLabel">Link to Goal</label>
+            <select id="savingGoalLink">
+                </select>
         </div>
 
         <div class="form-group">
-            <label for="note">Note (optional)</label>
-            <input type="text" id="note" name="note" placeholder="e.g. Party snack">
+            <label class="form-label-text">Note</label>
+            <input type="text" class="input-field" placeholder="Optional descriptions..." id="note"/>
         </div>
 
-        <div class="form-group">
-            <label for="savingGoal">Link to saving goal (optional)</label>
-            <select id="savingGoal" name="savingGoalId">
-                <option value="">none</option>
-                <option value="1">Retirement Fund</option>
-                <option value="2">New Dress</option>
-                <option value="3">Health Fund</option>
-            </select>
+        <div class="form-group" style="margin-top: 35px; margin-bottom: 10px;">
+            <label class="checkbox-container">
+                <input type="checkbox" id="autoSaveRecurring">
+                <span class="custom-checkmark"></span>
+                Automatically save this transaction when a new month arrives
+            </label>
         </div>
 
         <div class="form-actions-row">
-            <button type="button" class="btn-secondary" onclick="window.location.href='transactions.html'">Cancel</button>
-            <button type="button" id="saveTransactionBtn" class="btn-primary-action" onclick="window.location.href='transactions.html'">Save transaction</button>
+            <button type="button" class="btn-secondary" onclick="window.location.href='transaction.html'">Cancel</button>
+            <button type="submit" class="btn-primary">Save transaction</button>
         </div>
     </form>
 </div>
 
 <script>
-    // Handles toggling state safely before pipeline submissions
+    const optionsDatabase = {
+        EXPENSE_CATEGORIES: [
+            { value: "FOOD", text: "Food & Groceries" },
+            { value: "TRANSPORT", text: "Transportation" },
+            { value: "ENTERTAINMENT", text: "Entertainment" },
+            { value: "UTILITIES", text: "Utilities & Bills" }
+        ],
+        INCOME_CATEGORIES: [
+            { value: "SALARY", text: "Salary & Wages" },
+            { value: "FREELANCE", text: "Freelance / Side Hustle" },
+            { value: "INVESTMENTS", text: "Investments Revenue" }
+        ],
+        SAVING_CATEGORIES: [
+            { value: "EMERGENCY", text: "Emergency Fund" },
+            { value: "RETIREMENT", text: "Retirement Fund" }
+        ],
+        SAVING_GOALS: [
+            { value: "LAPTOP", text: "New Macbook Fund" },
+            { value: "VACATION", text: "Japan Trip Fund" }
+        ]
+    };
+
     function setTransactionType(type) {
         document.getElementById('transactionType').value = type;
-        const buttons = document.querySelectorAll('.tab-option');
-        buttons.forEach(btn => {
-            btn.classList.remove('active');
-            if(btn.innerText.toUpperCase().includes(type.substring(0,3))) {
-                btn.classList.add('active');
-            }
-        });
-    }
-    
-    // Automatically sets input interface parameter fields safely to present date coordinates
-    document.getElementById('date').valueAsDate = new Date();
-</script>
 
+        document.getElementById('tabExpense').classList.remove('active');
+        document.getElementById('tabIncome').classList.remove('active');
+        document.getElementById('tabSaving').classList.remove('active');
+
+        const categoryLabel = document.getElementById('categoryLabel');
+        const categorySelect = document.getElementById('category');
+        const savingGoalWrapper = document.getElementById('savingGoalWrapper');
+        const savingGoalSelect = document.getElementById('savingGoalLink');
+
+        categorySelect.innerHTML = '';
+        savingGoalSelect.innerHTML = '';
+
+        if (type === 'EXPENSE') {
+            document.getElementById('tabExpense').classList.add('active');
+            categoryLabel.innerText = "Link to Budget";
+            savingGoalWrapper.style.display = "none";
+            
+            optionsDatabase.EXPENSE_CATEGORIES.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+        } 
+        else if (type === 'INCOME') {
+            document.getElementById('tabIncome').classList.add('active');
+            categoryLabel.innerText = "Category";
+            savingGoalWrapper.style.display = "none";
+            
+            optionsDatabase.INCOME_CATEGORIES.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+        } 
+        else if (type === 'SAVING') {
+            document.getElementById('tabSaving').classList.add('active');
+            categoryLabel.innerText = "Link to Monthly Saving";
+            savingGoalWrapper.style.display = "block";
+            
+            optionsDatabase.SAVING_CATEGORIES.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                categorySelect.appendChild(el);
+            });
+
+            optionsDatabase.SAVING_GOALS.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                goalSelect.appendChild(el); // Keeps your original logic reference name intact
+            });
+        }
+    }
+
+    // Run initialization mapping on load
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('date').valueAsDate = new Date();
+        setTransactionType('EXPENSE');
+    });
+
+    document.getElementById('addTransactionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const payload = {
+            type: document.getElementById('transactionType').value,
+            name: document.getElementById('title').value,
+            amount: parseFloat(document.getElementById('amount').value),
+            date: document.getElementById('date').value,
+            note: document.getElementById('note').value,
+            autoSaveRecurring: document.getElementById('autoSaveRecurring').checked
+        };
+
+        if (payload.type === 'EXPENSE') {
+            payload.category = document.getElementById('category').value;
+        } else if (payload.type === 'INCOME') {
+            payload.category = document.getElementById('category').value;
+        } else if (payload.type === 'SAVING') {
+            payload.category = document.getElementById('category').value;
+            payload.savingGoalId = document.getElementById('savingGoalLink').value;
+        }
+
+        console.log("Submitting transaction package payload:", payload);
+        // window.location.href = 'transaction.html';
+    });
+</script>
 </body>
 </html>

@@ -4,9 +4,73 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Saving Goals</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/goals.css"/>
+    <style>
+        /* Top-Right header navigation controls alignment */
+        .monthly-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .monthly-nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #F3F4F6;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #E5E7EB;
+        }
+        .btn-month-arrow {
+            background: #ffffff;
+            border: 1px solid #E5E7EB;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 2px 8px;
+            cursor: pointer;
+            color: #1F2937;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-month-arrow:hover {
+            background: #F9FAFB;
+            border-color: #D1D5DB;
+        }
+        .nav-month-label-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4B5563;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        /* Linear Progress Trackers */
+        .monthly-progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #E5E7EB;
+            border-radius: 999px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            overflow: hidden;
+        }
+        .monthly-progress-bar-fill {
+            height: 100%;
+            width: 0%; 
+            background: #10B981; 
+            border-radius: 999px;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        /* Interactive styling pointer */
+        .goal-interactive-card, .dashed-add-card {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,15 +98,6 @@
             </svg>
             Dashboard
         </a>
-        <a class="nav__link" href="transaction.html">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
-                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
-                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Transactions
-        </a>
         <a class="nav__link" href="budget.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -61,15 +116,25 @@
             </svg>
             Goals
         </a>
+        <a class="nav__link" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
     </div>
 
     <div class="navbar__right">
-        <span class="navbar__period">April 2026</span>
-        <button class="btn-add" onclick="alert('Add Goal functionality clicked')">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-    </svg>
-    New goal </button>
+        <div id="liveTransactionDateDisplay" style="font-size: 22px; font-weight: 700; color: #6B7280;">Date: --/--/----</div>
+        <button class="btn-add" onclick="navigateToGoalDetails('new')">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            New goal 
+        </button>
         <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
 </nav>
@@ -84,17 +149,29 @@
         
         <div class="card stat-card">
             <span class="goals-card-label">Total saved</span>
-            <div class="goals-card-amount text-green">$8,940</div>
+            <div class="goals-card-amount text-green" id="displayTotalSaved">$8,940</div>
             <div class="goals-card-sub">across all goals</div>
         </div>
         
         <div class="card stat-card">
-            <span class="goals-card-label">Monthly deposit target</span>
-            <div class="goals-card-amount text-dark">$600</div>
-            <div class="goals-card-sub">$450 deposited this month</div>
+            <div class="monthly-card-header">
+                <span class="goals-card-label">Monthly saving goal</span>
+                <div class="monthly-nav-controls">
+                    <button type="button" class="btn-month-arrow" onclick="adjustSelectedMonth(-1)">←</button>
+                    <span class="nav-month-label-text" id="activeMonthLabel">May 2026</span>
+                    <button type="button" class="btn-month-arrow" onclick="adjustSelectedMonth(1)">→</button>
+                </div>
+            </div>
+            
+            <div class="goals-card-amount text-dark" id="displayMonthlyTarget">$600</div>
+            
+            <div class="monthly-progress-container">
+                <div class="monthly-progress-bar-fill" id="monthlyGoalProgressBarFill"></div>
+            </div>
+            <div class="goals-card-sub" id="displayMonthlyDeposited">$450 deposited this month</div>
         </div>
 
-        <div class="card goal-interactive-card" onclick="window.location.href='goal_details.html'">
+        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('retirement')">
             <div class="goal-title-row">
                 <span class="goal-emoji">🏦</span>
                 <span class="goal-name">Retirement Fund</span>
@@ -106,7 +183,7 @@
             <div class="goal-card-footer-text">$1,500 per 2026</div>
         </div>
 
-        <div class="card goal-interactive-card" onclick="window.location.href='goal_details.html'">
+        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('dress')">
             <div class="goal-title-row">
                 <span class="goal-emoji">👗</span>
                 <span class="goal-name">New Dress</span>
@@ -118,7 +195,7 @@
             <div class="goal-card-footer-text text-green">Almost there!</div>
         </div>
 
-        <div class="card goal-interactive-card" onclick="window.location.href='goal_details.html'">
+        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('china_trip')">
             <div class="goal-title-row">
                 <span class="goal-emoji">✈️</span>
                 <span class="goal-name">Trip to China</span>
@@ -130,7 +207,7 @@
             <div class="goal-card-footer-text">$210/mo needed</div>
         </div>
 
-        <div class="card goal-interactive-card dashed-add-card">
+        <div class="card goal-interactive-card dashed-add-card" onclick="navigateToGoalDetails('new')">
             <div class="add-inner-element">
                 <div class="plus-icon-symbol">+</div>
                 <div class="desc-text">Add new goal</div>
@@ -142,5 +219,59 @@
     <p class="bottom-helper-caption-text">Click any goal to view details and deposit →</p>
 </main>
 
+<script>
+    let currentActiveDate = new Date(2026, 4, 1); 
+
+    // Helper to send the unique ID in the URL to goal_details.html
+    function navigateToGoalDetails(goalId) {
+        window.location.href = `goal_details.html?id=${goalId}`;
+    }
+
+    // ==========================================
+    // DATA GRABBER (For Monthly Card Controls Syncing)
+    // ==========================================
+    async function fetchGoalDataFromDatabase(year, month) {
+        try {
+            const lookupKey = `${year}-${String(month).padStart(2, '0')}`;
+            const localMockDatabase = {
+                "2026-04": { totalSaved: "$8,490", targetText: "$500", depositedText: "$500 deposited this month", targetVal: 500, depositedVal: 500 },
+                "2026-05": { totalSaved: "$8,940", targetText: "$600", depositedText: "$450 deposited this month", targetVal: 600, depositedVal: 450 },
+                "2026-06": { totalSaved: "$9,340", targetText: "$700", depositedText: "$0 deposited this month", targetVal: 700, depositedVal: 0 }
+            };
+            return localMockDatabase[lookupKey] || { totalSaved: "$8,940", targetText: "$600", depositedText: "$0 deposited this month", targetVal: 600, depositedVal: 0 };
+        } catch (error) {
+            console.error("Database tracking issues:", error);
+        }
+    }
+
+    async function renderGoalsInterface() {
+        const activeYear = currentActiveDate.getFullYear();
+        const activeMonthInt = currentActiveDate.getMonth() + 1;
+
+        const data = await fetchGoalDataFromDatabase(activeYear, activeMonthInt);
+        const textFormattedMonth = currentActiveDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+        document.getElementById('activeMonthLabel').innerText = textFormattedMonth;
+        document.getElementById('liveTransactionDateDisplay').innerText = "Date: " + textFormattedMonth;
+        document.getElementById('displayTotalSaved').innerText = data.totalSaved;
+        document.getElementById('displayMonthlyTarget').innerText = data.targetText;
+        document.getElementById('displayMonthlyDeposited').innerText = data.depositedText;
+
+        let progressPercent = 0;
+        if (data.targetVal > 0) {
+            progressPercent = Math.min((data.depositedVal / data.targetVal) * 100, 100);
+        }
+        document.getElementById('monthlyGoalProgressBarFill').style.width = `${progressPercent}%`;
+    }
+
+    function adjustSelectedMonth(directionStep) {
+        currentActiveDate.setMonth(currentActiveDate.getMonth() + directionStep);
+        renderGoalsInterface();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderGoalsInterface();
+    });
+</script>
 </body>
 </html>

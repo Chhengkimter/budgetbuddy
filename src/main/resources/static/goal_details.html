@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BudDy — Target Breakdown</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/goal_details.css"/>
 </head>
@@ -34,15 +34,6 @@
             </svg>
             Dashboard
         </a>
-        <a class="nav__link" href="transaction.html">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
-                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
-                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Transactions
-        </a>
         <a class="nav__link" href="budget.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -61,10 +52,19 @@
             </svg>
             Goals
         </a>
+        <a class="nav__link" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
     </div>
 
     <div class="navbar__right">
-        <span class="navbar__period">April 2026</span>
+        <span class="navbar__period" id="headerPeriodDisplay">April 2026</span>
         <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
 </nav>
@@ -75,32 +75,34 @@
     </div>
 
     <div class="banner-goal-center">
-        <div class="banner-emoji">✈️</div>
-        <h1 class="banner-title">Trip to China</h1>
-        <div class="banner-progress-wrap">
-            <div class="progress-container"><div class="progress-bar-fill" style="width: 72%; background: var(--blue);"></div></div>
-            <p class="pct-subtitle-text">72% complete</p>
+        <div class="banner-emoji" id="displayBannerEmoji">✈️</div>
+        <h1 class="banner-title" id="displayBannerTitle">Trip to China</h1>
+        <div class="banner-progress-wrap" id="bannerProgressWrapper">
+            <div class="progress-container">
+                <div class="progress-bar-fill" id="displayBannerProgressFill" style="width: 72%; background: var(--blue);"></div>
+            </div>
+            <p class="pct-subtitle-text" id="displayBannerProgressPct">72% complete</p>
         </div>
     </div>
 
     <div class="goal-detail-master-grid">
         
         <div class="card summary-stat-card">
-            <span class="detail-card-label">Saved so far</span>
-            <div class="detail-card-amount">$1,080</div>
+            <span class="detail-card-label" id="labelStatLeft">Saved so far</span>
+            <div class="detail-card-amount" id="valStatLeft">$1,080</div>
         </div>
         
-        <div class="card summary-stat-card card-remain-bg">
-            <span class="detail-card-label text-danger">Remaining</span>
-            <div class="detail-card-amount text-danger">$420</div>
+        <div class="card summary-stat-card card-remain-bg" id="cardMiddleWrapper">
+            <span class="detail-card-label text-danger" id="labelStatMiddle">Remaining</span>
+            <div class="detail-card-amount text-danger" id="valStatMiddle">$420</div>
         </div>
         
-        <div class="card summary-stat-card card-needed-bg">
-            <span class="detail-card-label text-amber">Monthly needed</span>
-            <div class="detail-card-amount text-amber">$210</div>
+        <div class="card summary-stat-card card-needed-bg" id="cardRightWrapper">
+            <span class="detail-card-label text-amber" id="labelStatRight">Monthly needed</span>
+            <div class="detail-card-amount text-amber" id="valStatRight">$210</div>
         </div>
 
-        <div class="vertical-stack-left">
+        <div class="vertical-stack-left" id="leftWorkspaceStack">
             <div class="card interactive-workspace-card">
                 <div class="card__hdr"><span class="card__title">Deposit to this goal</span></div>
                 <form id="goalDepositForm">
@@ -124,7 +126,7 @@
 
             <div class="card interactive-workspace-card">
                 <div class="card__hdr"><span class="card__title">Saved history</span></div>
-                <div class="ledger-history-container">
+                <div class="ledger-history-container" id="historyLedgerContainer">
                     <div class="ledger-row-item">
                         <div class="item-left-cell"><p class="main-title">Deposit</p><p class="sub-date">Apr 20</p></div>
                         <div class="item-right-cell"><span class="green-tx">+$100</span><button class="delete-icon-btn">🗑</button></div>
@@ -141,8 +143,8 @@
             </div>
         </div>
 
-        <div class="card interactive-workspace-card settings-card-span">
-            <div class="card__hdr"><span class="card__title">Goal settings</span></div>
+        <div class="card interactive-workspace-card settings-card-span" id="settingsPanelCard">
+            <div class="card__hdr"><span class="card__title" id="settingsCardTitle">Goal settings</span></div>
             <form id="goalSettingsForm">
                 <div class="form-group">
                     <label for="goalName">Goal name</label>
@@ -164,8 +166,8 @@
                 </div>
                 
                 <div class="form-double-actions-footer">
-                    <button type="button" class="btn-primary-action">Save changes</button>
-                    <button type="button" class="btn-danger-action">Delete goal</button>
+                    <button type="button" class="btn-primary-action" id="btnMainSettingsSubmit">Save changes</button>
+                    <button type="button" class="btn-danger-action" id="btnDangerSettingsAction">Delete goal</button>
                 </div>
             </form>
         </div>
@@ -175,6 +177,115 @@
 
 <script>
     document.getElementById('depDate').valueAsDate = new Date();
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const goalId = urlParams.get('id');
+
+        // Static Local Mock Database (Simulating what your Spring Boot API will provide later)
+        const sampleGoalsDb = {
+            "retirement": {
+                emoji: "🏦", title: "Retirement Fund", progress: "10%", progressColor: "var(--primary)",
+                saved: "$3,000", remain: "$27,000", needed: "$1,500", targetRaw: 30000, monthlyRaw: 1500, dateRaw: "Ongoing",
+                history: `
+                    <div class="ledger-row-item">
+                        <div class="item-left-cell"><p class="main-title">Monthly Allocation</p><p class="sub-date">May 02</p></div>
+                        <div class="item-right-cell"><span class="green-tx">+$1,500</span><button class="delete-icon-btn">🗑</button></div>
+                    </div>
+                    <div class="ledger-row-item">
+                        <div class="item-left-cell"><p class="main-title">Initial Transfer</p><p class="sub-date">Apr 11</p></div>
+                        <div class="item-right-cell"><span class="green-tx">+$1,500</span><button class="delete-icon-btn">🗑</button></div>
+                    </div>`
+            },
+            "dress": {
+                emoji: "👗", title: "New Dress", progress: "78%", progressColor: "var(--green)",
+                saved: "$78", remain: "$22", needed: "$22", targetRaw: 100, monthlyRaw: 22, dateRaw: "June 2026",
+                history: `
+                    <div class="ledger-row-item">
+                        <div class="item-left-cell"><p class="main-title">Saved Birthday Cash</p><p class="sub-date">May 14</p></div>
+                        <div class="item-right-cell"><span class="green-tx">+$78</span><button class="delete-icon-btn">🗑</button></div>
+                    </div>`
+            },
+            "china_trip": {
+                emoji: "✈️", title: "Trip to China", progress: "72%", progressColor: "var(--blue)",
+                saved: "$1,080", remain: "$420", needed: "$210", targetRaw: 1500, monthlyRaw: 210, dateRaw: "Dec 2026",
+                history: `
+                    <div class="ledger-row-item">
+                        <div class="item-left-cell"><p class="main-title">Deposit</p><p class="sub-date">Apr 20</p></div>
+                        <div class="item-right-cell"><span class="green-tx">+$100</span><button class="delete-icon-btn">🗑</button></div>
+                    </div>
+                    <div class="ledger-row-item">
+                        <div class="item-left-cell"><p class="main-title">Deposit</p><p class="sub-date">Mar 21</p></div>
+                        <div class="item-right-cell"><span class="green-tx">+$210</span><button class="delete-icon-btn">🗑</button></div>
+                    </div>`
+            }
+        };
+
+        if (goalId === 'new') {
+            // ==========================================
+            // STATE A: Transforming page to Create a New Goal
+            // ==========================================
+            document.getElementById('displayBannerEmoji').innerText = "✨";
+            document.getElementById('displayBannerTitle').innerText = "Create New Saving Goal";
+            
+            // Hide progress tracking metrics completely since the goal has no value yet
+            document.getElementById('bannerProgressWrapper').style.display = "none";
+            document.getElementById('leftWorkspaceStack').style.display = "none"; 
+            
+            // Reconfigure the top summary boxes to serve as setup indicators
+            document.getElementById('labelStatLeft').innerText = "Initial Status";
+            document.getElementById('valStatLeft').innerText = "Drafting";
+            document.getElementById('labelStatMiddle').innerText = "Current Progress";
+            document.getElementById('valStatMiddle').innerText = "0%";
+            document.getElementById('labelStatRight').innerText = "Configuration";
+            document.getElementById('valStatRight').innerText = "Pending";
+
+            // Expand the configuration settings form to occupy full width comfortably
+            document.getElementById('settingsPanelCard').classList.remove('settings-card-span');
+            document.getElementById('settingsPanelCard').style.gridColumn = "1 / -1";
+            document.getElementById('settingsCardTitle').innerText = "Configure Goal Parameters";
+
+            // Reset setup fields to empty/default states
+            document.getElementById('goalName').value = "";
+            document.getElementById('targetAmount').value = "";
+            document.getElementById('monthlyTarget').value = "";
+            document.getElementById('targetDate').value = "";
+
+            // Adjust form button text labels appropriately
+            document.getElementById('btnMainSettingsSubmit').innerText = "Create Goal Target";
+            document.getElementById('btnDangerSettingsAction').innerText = "Reset Fields";
+            document.getElementById('btnDangerSettingsAction').setAttribute("type", "reset");
+
+        } else {
+            // ==========================================
+            // STATE B: Load Pre-Existing Goal Data Dynamically
+            // ==========================================
+            const currentGoal = sampleGoalsDb[goalId] || sampleGoalsDb["china_trip"];
+
+            // Render Banner Content
+            document.getElementById('displayBannerEmoji').innerText = currentGoal.emoji;
+            document.getElementById('displayBannerTitle').innerText = currentGoal.title;
+            document.getElementById('displayBannerProgressPct').innerText = `${currentGoal.progress} complete`;
+            
+            const progressBarFill = document.getElementById('displayBannerProgressFill');
+            progressBarFill.style.width = currentGoal.progress;
+            progressBarFill.style.background = currentGoal.progressColor;
+
+            // Render Top Metric Blocks
+            document.getElementById('valStatLeft').innerText = currentGoal.saved;
+            document.getElementById('valStatMiddle').innerText = currentGoal.remain;
+            document.getElementById('valStatRight').innerText = currentGoal.needed;
+
+            // Load Historical Statement Rows
+            document.getElementById('historyLedgerContainer').innerHTML = currentGoal.history;
+
+            // Populate Form Configuration Inputs
+            document.getElementById('goalName').value = currentGoal.title;
+            document.getElementById('targetAmount').value = currentGoal.targetRaw;
+            document.getElementById('monthlyTarget').value = currentGoal.monthlyRaw;
+            document.getElementById('targetDate').value = currentGoal.dateRaw;
+        }
+    });
 </script>
 </body>
 </html>
