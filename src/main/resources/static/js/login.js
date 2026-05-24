@@ -1,47 +1,67 @@
-// ── API Base URL ──────────────────────────────────────────────
-const API = 'http://localhost:8080/api';
+const API_BASE = 'http://localhost:8080/api';
 
-// ── Handle Login ───────────────────────────────────────────────
-async function handleLogin(event) {
-    event.preventDefault();
+async function handleLogin(e) {
+    e.preventDefault();
 
-    const email    = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
+    const errorBox = document.getElementById('loginError');
+    const btn      = document.getElementById('loginBtn');
 
-    const errorDiv = document.getElementById('loginError');
-    errorDiv.style.display = 'none';
-    errorDiv.textContent = '';
+    // Reset state
+    errorBox.style.display = 'none';
+    errorBox.textContent   = '';
+
+    const payload = {
+        userEmail:    document.getElementById('loginEmail').value.trim(),
+        userPassword: document.getElementById('loginPassword').value,
+    };
+
+    if (!payload.userEmail || !payload.userPassword) {
+        errorBox.textContent   = 'Please enter your email and password.';
+        errorBox.style.display = 'block';
+        return;
+    }
+
+    // Loading state
+    btn.textContent = 'Logging in...';
+    btn.disabled    = true;
 
     try {
-        // Validate input
-        if (!email || !password) {
-            throw new Error('Please enter email and password');
-        }
-
-        // Call the backend login endpoint
-        const response = await fetch(`${API}/users/login`, {
+        const response = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify(payload)
         });
 
-        const data = await response.json();
+        if (response.ok) {
+            const user = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
+            // Save user to sessionStorage so other pages can read it
+            // sessionStorage clears when the browser tab is closed
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+            sessionStorage.setItem('userID', user.userID);
+
+            // If "Remember me" is checked, also persist to localStorage
+            const rememberMe = document.getElementById('remember').checked;
+            if (rememberMe) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('userID', user.userID);
+            }
+
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+
+        } else {
+            // 401 from backend — always same message, never reveal which field failed
+            errorBox.textContent   = 'Invalid email or password.';
+            errorBox.style.display = 'block';
         }
 
-        // Success - store user data
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('userName', data.name);
-        localStorage.setItem('userEmail', data.email);
-        localStorage.setItem('isLoggedIn', 'true');
+    } catch (err) {
+        errorBox.textContent   = 'Cannot connect to server. Make sure the backend is running.';
+        errorBox.style.display = 'block';
 
-        // Redirect to dashboard
-        window.location.href = 'dashboard.html';
-
-    } catch (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.style.display = 'block';
+    } finally {
+        btn.textContent = 'Log In';
+        btn.disabled    = false;
     }
 }

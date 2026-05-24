@@ -1,120 +1,80 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "budgets")
+@Table(name = "Budget")
 public class Budget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "BudgetID")
+    private Long budgetID;
 
-    @NotBlank(message = "Budget name is required")
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "UserID", nullable = false)
+    private Long userID;
 
-    @NotBlank(message = "Category is required")
-    @Column(nullable = false)
-    private String category;
+    @Column(name = "BudgetName", nullable = false)
+    private String budgetName;
 
-    @Column
-    private String description;
+    @Column(name = "BudgetLimit", nullable = false, precision = 15, scale = 2)
+    private BigDecimal budgetLimit;
 
-    @Positive(message = "Amount must be positive")
-    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
-    private BigDecimal totalAmount;
+    @Column(name = "BudgetUpdated")
+    private LocalDateTime budgetUpdated;
 
-    @Column(name = "spent_amount", precision = 12, scale = 2)
-    private BigDecimal spentAmount = BigDecimal.ZERO;
+    @Column(name = "BudgetMonth", nullable = false)
+    private Integer budgetMonth;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "BudgetYear", nullable = false)
+    private Integer budgetYear;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "BudgetIsRecurring")
+    private Boolean budgetIsRecurring = false;
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"budgets", "password", "hibernateLazyInitializer"})
-    private User user;
-
-    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transaction> transactions;
+    @Column(name = "BudgetLastGeneratedDate")
+    private LocalDate budgetLastGeneratedDate;
 
     public Budget() {}
 
-    public Budget(String name, String category, BigDecimal totalAmount, User user) {
-        this.name        = name;
-        this.category    = category;
-        this.totalAmount = totalAmount;
-        this.user        = user;
+    public Budget(Long userID, String budgetName, BigDecimal budgetLimit,
+                  int budgetMonth, int budgetYear, boolean isRecurring) {
+        this.userID            = userID;
+        this.budgetName        = budgetName;
+        this.budgetLimit       = budgetLimit;
+        this.budgetMonth       = budgetMonth;
+        this.budgetYear        = budgetYear;
+        this.budgetIsRecurring = isRecurring;
+        this.budgetUpdated     = LocalDateTime.now();
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt   = LocalDateTime.now();
-        this.updatedAt   = LocalDateTime.now();
-        this.isActive    = true;
-        this.spentAmount = BigDecimal.ZERO;
-    }
+    public Long          getBudgetID()                            { return budgetID; }
+    public void          setBudgetID(Long budgetID)               { this.budgetID = budgetID; }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    public Long          getUserID()                              { return userID; }
+    public void          setUserID(Long userID)                   { this.userID = userID; }
 
-    @Transient
-    public BigDecimal getRemainingBalance() {
-        if (totalAmount == null) return BigDecimal.ZERO;
-        return totalAmount.subtract(spentAmount != null ? spentAmount : BigDecimal.ZERO);
-    }
+    public String        getBudgetName()                          { return budgetName; }
+    public void          setBudgetName(String budgetName)         { this.budgetName = budgetName; }
 
-    public Long getId()                             { return id; }
-    public void setId(Long id)                      { this.id = id; }
+    public BigDecimal    getBudgetLimit()                         { return budgetLimit; }
+    public void          setBudgetLimit(BigDecimal budgetLimit)   { this.budgetLimit = budgetLimit; }
 
-    public String getName()                         { return name; }
-    public void setName(String name)                { this.name = name; }
+    public LocalDateTime getBudgetUpdated()                       { return budgetUpdated; }
+    public void          setBudgetUpdated(LocalDateTime d)        { this.budgetUpdated = d; }
 
-    public String getCategory()                     { return category; }
-    public void setCategory(String category)        { this.category = category; }
+    public Integer       getBudgetMonth()                         { return budgetMonth; }
+    public void          setBudgetMonth(Integer budgetMonth)      { this.budgetMonth = budgetMonth; }
 
-    public String getDescription()                  { return description; }
-    public void setDescription(String description)  { this.description = description; }
+    public Integer       getBudgetYear()                          { return budgetYear; }
+    public void          setBudgetYear(Integer budgetYear)        { this.budgetYear = budgetYear; }
 
-    public BigDecimal getTotalAmount()              { return totalAmount; }
-    public void setTotalAmount(BigDecimal amount)   { this.totalAmount = amount; }
+    public Boolean       getBudgetIsRecurring()                   { return budgetIsRecurring; }
+    public void          setBudgetIsRecurring(Boolean recurring)  { this.budgetIsRecurring = recurring; }
 
-    public BigDecimal getSpentAmount()              { return spentAmount; }
-    public void setSpentAmount(BigDecimal spent)    { this.spentAmount = spent; }
-
-    public LocalDateTime getCreatedAt()             { return createdAt; }
-    public void setCreatedAt(LocalDateTime dt)      { this.createdAt = dt; }
-
-    public LocalDateTime getUpdatedAt()             { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime dt)      { this.updatedAt = dt; }
-
-    public Boolean getIsActive()                    { return isActive; }
-    public void setIsActive(Boolean isActive)       { this.isActive = isActive; }
-
-    public User getUser()                           { return user; }
-    public void setUser(User user)                  { this.user = user; }
-
-    public List<Transaction> getTransactions()      { return transactions; }
-    public void setTransactions(List<Transaction> t){ this.transactions = t; }
-
-    @Override
-    public String toString() {
-        return "Budget{id=" + id + ", name='" + name + "', category='" + category + "', total=" + totalAmount + "}";
-    }
+    public LocalDate     getBudgetLastGeneratedDate()             { return budgetLastGeneratedDate; }
+    public void          setBudgetLastGeneratedDate(LocalDate d)  { this.budgetLastGeneratedDate = d; }
 }

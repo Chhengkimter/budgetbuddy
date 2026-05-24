@@ -10,6 +10,10 @@
     width: 100%;
 }
 
+.budget-master-grid .content-card {
+    grid-column: 1 / -1;
+}
+
 /* Sizing overview modules mapping down directly to progress containers */
 .header-stat-card {
     padding: 30px 32px;

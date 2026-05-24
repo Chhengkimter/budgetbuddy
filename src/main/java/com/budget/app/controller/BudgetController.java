@@ -1,60 +1,69 @@
 package com.budget.app.controller;
 
-import com.budget.app.dto.BudgetDTO;
+import com.budget.app.dto.BudgetRequestDTO;
+import com.budget.app.dto.BudgetSummaryDTO;
 import com.budget.app.model.Budget;
 import com.budget.app.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+/**
+ * REST controller for budget plans.
+ *
+ * Endpoints:
+ *   GET    /api/budgets/summary?userID=&month=&year=   → BudgetSummaryDTO
+ *   POST   /api/budgets?userID=                        → Budget (201)
+ *   PUT    /api/budgets/{budgetID}                     → Budget
+ *   DELETE /api/budgets/{budgetID}                     → 204
+ */
 @RestController
 @RequestMapping("/api/budgets")
 @CrossOrigin(origins = "*")
 public class BudgetController {
 
+    private final BudgetService budgetService;
+
     @Autowired
-    private BudgetService budgetService;
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BudgetDTO>> getBudgetsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(
-            budgetService.getBudgetsByUser(userId)
-                .stream()
-                .map(BudgetDTO::new)
-                .collect(Collectors.toList())
-        );
+    public BudgetController(BudgetService budgetService) {
+        this.budgetService = budgetService;
     }
 
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<BudgetDTO> createBudget(
-            @PathVariable Long userId,
-            @RequestBody Budget budget) {
-        Budget saved = budgetService.createBudget(userId, budget);
-        return ResponseEntity.status(201).body(new BudgetDTO(saved));
+    // ── Summary (used by budget.html) ─────────────────────────────────────────
+
+    @GetMapping("/summary")
+    public ResponseEntity<BudgetSummaryDTO> getSummary(
+            @RequestParam Long userID,
+            @RequestParam int  month,
+            @RequestParam int  year) {
+        return ResponseEntity.ok(budgetService.getSummary(userID, month, year));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateBudget(@PathVariable Long id,
-                                           @Valid @RequestBody Budget budget) {
-        try {
-            Budget updated = budgetService.updateBudget(id, budget);
-            return ResponseEntity.ok(new BudgetDTO(updated));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    // ── Create ────────────────────────────────────────────────────────────────
+
+    @PostMapping
+    public ResponseEntity<Budget> createBudget(
+            @RequestParam Long userID,
+            @RequestBody  BudgetRequestDTO req) {
+        Budget created = budgetService.createBudget(userID, req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBudget(@PathVariable Long id) {
-        try {
-            budgetService.deleteBudget(id);
-            return ResponseEntity.ok(Map.of("message", "Budget deleted successfully"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    // ── Update ────────────────────────────────────────────────────────────────
+
+    @PutMapping("/{budgetID}")
+    public ResponseEntity<Budget> updateBudget(
+            @PathVariable Long budgetID,
+            @RequestBody  BudgetRequestDTO req) {
+        return ResponseEntity.ok(budgetService.updateBudget(budgetID, req));
+    }
+
+    // ── Delete ────────────────────────────────────────────────────────────────
+
+    @DeleteMapping("/{budgetID}")
+    public ResponseEntity<Void> deleteBudget(@PathVariable Long budgetID) {
+        budgetService.deleteBudget(budgetID);
+        return ResponseEntity.noContent().build();
     }
 }

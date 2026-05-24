@@ -1,207 +1,126 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "recurring_transactions")
+@Table(name = "RecurringTransaction")
 public class RecurringTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "RecurringID")
+    private Long recurringID;
 
-    @NotBlank(message = "Description is required")
-    @Column(nullable = false)
-    private String description;
+    @Column(name = "UserID", nullable = false)
+    private Long userID;
 
-    @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal amount;
-
-    @NotNull(message = "Type is required")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Transaction.Type type;  // INCOME or EXPENSE
-
-    @Column(length = 50)
-    private String categoryTag;
-
-    @NotNull(message = "Frequency is required")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private RecurringTransactionFrequency frequency;
-
-    @NotNull(message = "Next due date is required")
-    @Column(nullable = false, columnDefinition = "DATE")
-    private LocalDate nextDueDate;
-
-    @Column(columnDefinition = "DATE")
-    private LocalDate endDate;
-
-    @NotNull(message = "Active status is required")
-    @Column(nullable = false)
-    private Boolean isActive;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // A recurring transaction belongs to one budget
-    @ManyToOne
-    @JoinColumn(name = "budget_id", nullable = false)
-    private Budget budget;
-
-    // ── Constructors ──────────────────────────────────
-    public RecurringTransaction() {
-        this.isActive = true;
-        this.frequency = RecurringTransactionFrequency.MONTHLY;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public RecurringTransaction(String description, BigDecimal amount, Transaction.Type type, 
-                                RecurringTransactionFrequency frequency, LocalDate nextDueDate, 
-                                Budget budget) {
-        this();
-        this.description = description;
-        this.amount = amount;
-        this.type = type;
-        this.frequency = frequency;
-        this.nextDueDate = nextDueDate;
-        this.budget = budget;
-    }
-
-    public RecurringTransaction(String description, BigDecimal amount, Transaction.Type type, 
-                                String categoryTag, RecurringTransactionFrequency frequency, 
-                                LocalDate nextDueDate, LocalDate endDate, Budget budget) {
-        this();
-        this.description = description;
-        this.amount = amount;
-        this.type = type;
-        this.categoryTag = categoryTag;
-        this.frequency = frequency;
-        this.nextDueDate = nextDueDate;
-        this.endDate = endDate;
-        this.budget = budget;
-    }
-
-    // Auto-set timestamp before saving
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    // ── Getters & Setters ─────────────────────────────
-    public Long getId()                                              { return id; }
-    public void setId(Long id)                                       { this.id = id; }
-
-    public String getDescription()                                   { return description; }
-    public void setDescription(String description)                   { this.description = description; }
-
-    public BigDecimal getAmount()                                    { return amount; }
-    public void setAmount(BigDecimal amount)                         { this.amount = amount; }
-
-    public Transaction.Type getType()                                { return type; }
-    public void setType(Transaction.Type type)                       { this.type = type; }
-
-    public String getCategoryTag()                                   { return categoryTag; }
-    public void setCategoryTag(String categoryTag)                   { this.categoryTag = categoryTag; }
-
-    public RecurringTransactionFrequency getFrequency()              { return frequency; }
-    public void setFrequency(RecurringTransactionFrequency freq)     { this.frequency = freq; }
-
-    public LocalDate getNextDueDate()                                { return nextDueDate; }
-    public void setNextDueDate(LocalDate date)                       { this.nextDueDate = date; }
-
-    public LocalDate getEndDate()                                    { return endDate; }
-    public void setEndDate(LocalDate date)                           { this.endDate = date; }
-
-    public Boolean getIsActive()                                     { return isActive; }
-    public void setIsActive(Boolean isActive)                        { this.isActive = isActive; }
-
-    public LocalDateTime getCreatedAt()                              { return createdAt; }
-    public void setCreatedAt(LocalDateTime dt)                       { this.createdAt = dt; }
-
-    public LocalDateTime getUpdatedAt()                              { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime dt)                       { this.updatedAt = dt; }
-
-    public Budget getBudget()                                        { return budget; }
-    public void setBudget(Budget budget)                             { this.budget = budget; }
-
-    // ── Helper Methods ────────────────────────────────
-    /**
-     * Check if this recurring transaction is still active
-     * @return true if active and not expired
-     */
-    public boolean isStillActive() {
-        if (!isActive) {
-            return false;
-        }
-        if (endDate != null && LocalDate.now().isAfter(endDate)) {
-            return false;
-        }
-        return true;
-    }
+    /** Null for SAVING and INCOME templates; links EXPENSE to a budget category. */
+    @Column(name = "BudgetID")
+    private Long budgetID;
 
     /**
-     * Check if the next due date has passed
-     * @return true if next due date is today or in the past
+     * Null for INCOME and EXPENSE templates.
+     * Links SAVING templates to a specific goal so auto-generated deposits
+     * count toward that goal's progress.
      */
-    public boolean isDue() {
-        return nextDueDate.isBefore(LocalDate.now()) || nextDueDate.isEqual(LocalDate.now());
-    }
+    @Column(name = "GoalID")
+    private Long goalID;
+
+    /** INCOME | EXPENSE | SAVING */
+    @Column(name = "RTransactionType", nullable = false)
+    private String rTransactionType;
+
+    @Column(name = "RTransactionName", nullable = false)
+    private String rTransactionName;
+
+    @Column(name = "RTransactionNote")
+    private String rTransactionNote;
+
+    @Column(name = "RTransactionAmount", nullable = false, precision = 15, scale = 2)
+    private BigDecimal rTransactionAmount;
 
     /**
-     * Calculate the next occurrence date based on frequency
-     * @return the next due date after current next_due_date
+     * Day of month (1–28) on which the scheduler generates a Transaction row.
+     * Capped at 28 to avoid issues with February.
      */
-    public LocalDate calculateNextOccurrence() {
-        LocalDate current = nextDueDate;
-        return switch (frequency) {
-            case DAILY -> current.plusDays(1);
-            case WEEKLY -> current.plusWeeks(1);
-            case MONTHLY -> current.plusMonths(1);
-            case YEARLY -> current.plusYears(1);
-        };
+    @Column(name = "RecurringDay", nullable = false)
+    private int recurringDay;
+
+    @Column(name = "RTStartDate", nullable = false)
+    private LocalDate rtStartDate;
+
+    /** Null means the template runs indefinitely until manually deactivated. */
+    @Column(name = "RTEndDate")
+    private LocalDate rtEndDate;
+
+    @Column(name = "RTIsActive", nullable = false)
+    private boolean rtIsActive = true;
+
+    /** Updated by the scheduler each time it successfully generates a Transaction. */
+    @Column(name = "RTLastGeneratedDate")
+    private LocalDate rtLastGeneratedDate;
+
+    // ── Constructors ──────────────────────────────────────────────────────────
+
+    public RecurringTransaction() {}
+
+    public RecurringTransaction(Long userID, Long budgetID, Long goalID,
+                                String rTransactionType, String rTransactionName,
+                                String rTransactionNote, BigDecimal rTransactionAmount,
+                                int recurringDay, LocalDate rtStartDate, LocalDate rtEndDate) {
+        this.userID             = userID;
+        this.budgetID           = budgetID;
+        this.goalID             = goalID;
+        this.rTransactionType   = rTransactionType;
+        this.rTransactionName   = rTransactionName;
+        this.rTransactionNote   = rTransactionNote;
+        this.rTransactionAmount = rTransactionAmount;
+        this.recurringDay       = recurringDay;
+        this.rtStartDate        = rtStartDate;
+        this.rtEndDate          = rtEndDate;
+        this.rtIsActive         = true;
     }
 
-    /**
-     * Advance to next occurrence (called after transaction is processed)
-     */
-    public void advanceToNextOccurrence() {
-        this.nextDueDate = calculateNextOccurrence();
-        this.updatedAt = LocalDateTime.now();
-    }
+    // ── Getters & Setters ─────────────────────────────────────────────────────
 
-    /**
-     * Check if this recurring transaction has expired
-     * @return true if end_date has passed
-     */
-    public boolean hasExpired() {
-        return endDate != null && LocalDate.now().isAfter(endDate);
-    }
+    public Long getRecurringID()                     { return recurringID; }
+    public void setRecurringID(Long recurringID)     { this.recurringID = recurringID; }
 
-    @Override
-    public String toString() {
-        return "RecurringTransaction{" +
-                "id=" + id +
-                ", desc='" + description + '\'' +
-                ", amount=" + amount +
-                ", type=" + type +
-                ", frequency=" + frequency +
-                ", nextDueDate=" + nextDueDate +
-                ", isActive=" + isActive +
-                '}';
-    }
+    public Long getUserID()              { return userID; }
+    public void setUserID(Long userID)   { this.userID = userID; }
+
+    public Long getBudgetID()                { return budgetID; }
+    public void setBudgetID(Long budgetID)   { this.budgetID = budgetID; }
+
+    public Long getGoalID()              { return goalID; }
+    public void setGoalID(Long goalID)   { this.goalID = goalID; }
+
+    public String getRTransactionType()                          { return rTransactionType; }
+    public void   setRTransactionType(String rTransactionType)   { this.rTransactionType = rTransactionType; }
+
+    public String getRTransactionName()                          { return rTransactionName; }
+    public void   setRTransactionName(String rTransactionName)   { this.rTransactionName = rTransactionName; }
+
+    public String getRTransactionNote()                          { return rTransactionNote; }
+    public void   setRTransactionNote(String rTransactionNote)   { this.rTransactionNote = rTransactionNote; }
+
+    public BigDecimal getRTransactionAmount()                              { return rTransactionAmount; }
+    public void       setRTransactionAmount(BigDecimal rTransactionAmount) { this.rTransactionAmount = rTransactionAmount; }
+
+    public int  getRecurringDay()                  { return recurringDay; }
+    public void setRecurringDay(int recurringDay)   { this.recurringDay = recurringDay; }
+
+    public LocalDate getRtStartDate()                      { return rtStartDate; }
+    public void      setRtStartDate(LocalDate rtStartDate) { this.rtStartDate = rtStartDate; }
+
+    public LocalDate getRtEndDate()                    { return rtEndDate; }
+    public void      setRtEndDate(LocalDate rtEndDate) { this.rtEndDate = rtEndDate; }
+
+    public boolean isRtIsActive()                    { return rtIsActive; }
+    public void    setRtIsActive(boolean rtIsActive) { this.rtIsActive = rtIsActive; }
+
+    public LocalDate getRtLastGeneratedDate()                              { return rtLastGeneratedDate; }
+    public void      setRtLastGeneratedDate(LocalDate rtLastGeneratedDate) { this.rtLastGeneratedDate = rtLastGeneratedDate; }
 }

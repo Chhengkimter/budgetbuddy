@@ -139,22 +139,6 @@
                 </div>
         </div>
 
-<div class="card content-card">
-            <div class="card__hdr"><span class="card__title">Edit budget limit</span></div>
-            <form id="budgetLimitForm">
-                <div class="form-group">
-                    <label for="budgetCategory">Budget Name</label>
-                    <input type="text" id="budgetCategory" name="category" placeholder="e.g. Food, Trip, Clothes" required>
-                </div>
-                <div class="form-group">
-                    <label for="monthlyLimit">Monthly limit ($)</label>
-                    <input type="number" step="0.01" id="monthlyLimit" name="limitAmount" value="0.00" required>
-                </div>
-                <button type="button" class="btn-submit-action" onclick="updateBudgetPlanInDB()">Update limit</button>
-                <button type="button" class="btn-delete-budget" id="btnDeleteBudgetPlan" onclick="deleteBudgetPlanFromDB()">Delete budget</button> 
-            </form>
-        </div>
-
     </div>
 </main>
 
@@ -180,155 +164,24 @@
     </div>
 </div>
 
-<script>
-    // Global Date State Management
-    let currentActiveDate = new Date(); // Defaults to today's system time
+<div class="overlay" id="editBudgetOverlay" onclick="handleEditOverlayClick(event)">
+    <div class="modal">
+        <h3 class="modal__title">Edit budget</h3>
+        <div class="form-group">
+            <label for="budgetCategory">Budget Name</label>
+            <input type="text" id="budgetCategory" placeholder="Budget name" required>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+            <label for="monthlyLimit">Monthly limit ($)</label>
+            <input type="number" step="0.01" id="monthlyLimit" value="0.00" required>
+        </div>
+        <div class="modal__footer">
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button type="button" class="btn-save" onclick="updateBudgetPlanInDB()">Save</button>
+        </div>
+    </div>
+</div>
 
-    const monthNamesList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    function updateDateUILabel() {
-        const monthString = monthNamesList[currentActiveDate.getMonth()];
-        const yearInt = currentActiveDate.getFullYear();
-        const combinedText = `${monthString} ${yearInt}`;
-
-        document.getElementById('globalMonthYearLabel').innerText = combinedText;
-        document.getElementById('activeSubHeadingLabel').innerText = combinedText;
-    }
-
-    async function changeMonth(direction) {
-        currentActiveDate.setMonth(currentActiveDate.getMonth() + direction);
-        updateDateUILabel();
-        await loadBudgetDataFromDB(); // Dynamic structural reload directly matching new calendar state params
-    }
-
-    // ========================================================
-    // BACKEND REST CONTROLLER API INTEGRATION PIPELINES
-    // ========================================================
-    async function loadBudgetDataFromDB() {
-        const activeMonthParam = currentActiveDate.getMonth() + 1; // JS months are 0-11, database expects 1-12
-        const activeYearParam = currentActiveDate.getFullYear();
-
-        try {
-            // REST Connection Endpoint String passing dynamic dates to filter matching models
-            const endpointUrl = `/api/budgets/summary?month=${activeMonthParam}&year=${activeYearParam}`;
-            const response = await fetch(endpointUrl);
-            
-            if(!response.ok) throw new Error("Database query payload failed.");
-            const databasePayload = await response.json();
-            
-            renderDynamicBudgetDashboard(databasePayload);
-        } catch (error) {
-            console.warn("Backend unavailable. Simulating active reactive database pipeline logic schema for:", activeMonthParam, "/", activeYearParam);
-            
-            // Simulation Fallback dataset matching actual Spring Boot Entity payload mappings
-            const simulatedDBPayload = {
-                totalBudget: activeMonthParam === 4 ? 4000.00 : 3500.00,
-                totalSpend: activeMonthParam === 4 ? 1000.00 : 750.00,
-                budgetsList: [
-                    { categoryName: "Food", spent: activeMonthParam === 4 ? 200.00 : 120.00, limit: 300.00, colorVar: "var(--amber)" },
-                    { categoryName: "Transport", spent: 80.00, limit: 150.00, colorVar: "var(--primary)" },
-                    { categoryName: "Entertainment", spent: 20.00, limit: 200.00, colorVar: "var(--green)" },
-                    { categoryName: "Saving", spent: activeMonthParam === 4 ? 450.00 : 300.00, limit: 600.00, colorVar: "var(--blue)" }
-                ],
-                savingsGoal: { spent: activeMonthParam === 4 ? 450.00 : 300.00, target: 600.00 }
-            };
-            renderDynamicBudgetDashboard(simulatedDBPayload);
-        }
-    }
-
-    function renderDynamicBudgetDashboard(data) {
-        // Render Header aggregates
-        document.getElementById('totalBudgetSumHeader').innerText = `$${data.totalBudget.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-        document.getElementById('totalSpendSumHeader').innerText = `$${data.totalSpend.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-        
-        const pctUsed = data.totalBudget > 0 ? Math.round((data.totalSpend / data.totalBudget) * 100) : 0;
-        document.getElementById('totalSpendPctBadge').innerText = `${pctUsed}% used`;
-
-        // Render Budget category lists
-        const listContainer = document.getElementById('dynamicBudgetItemsContainer');
-        listContainer.innerHTML = "";
-
-        data.budgetsList.forEach(item => {
-            const itemPct = item.limit > 0 ? Math.min(Math.round((item.spent / item.limit) * 100), 100) : 0;
-            const rowHtml = `
-                <div class="budget-item-wrap">
-                    <div class="budget-meta-info"><span>${item.categoryName}</span><span class="bold-amt">$${item.spent} / $${item.limit}</span></div>
-                    <div class="progress-container"><div class="progress-bar-fill" style="width: ${itemPct}%; background: ${item.colorVar || 'var(--primary)'};"></div></div>
-                </div>`;
-            listContainer.innerHTML += rowHtml;
-        });
-
-        // Render Active Goal targets progress bar tracking layout safely
-        const goalWrapper = document.getElementById('overallSavingsProgressWrapper');
-        const goalPct = data.savingsGoal.target > 0 ? Math.min(Math.round((data.savingsGoal.spent / data.savingsGoal.target) * 100), 100) : 0;
-        
-        goalWrapper.innerHTML = `
-            <div class="budget-meta-info"><span>Overall progress</span><span class="bold-amt">$${data.savingsGoal.spent} / $${data.savingsGoal.target} target</span></div>
-            <div class="progress-container"><div class="progress-bar-fill" style="width: ${goalPct}%; background: var(--primary);"></div></div>`;
-    }
-
-    async function createNewBudgetPlanInDB() {
-        const payload = {
-            category: document.getElementById('newBudgetCategorySelect').value,
-            limitAmount: parseFloat(document.getElementById('newBudgetAmountInput').value),
-            month: currentActiveDate.getMonth() + 1,
-            year: currentActiveDate.getFullYear()
-        };
-
-        if(!payload.category || isNaN(payload.limitAmount) || payload.limitAmount <= 0) {
-            alert("Please complete fields accurately.");
-            return;
-        }
-
-        console.log("POST request payload sent upstream to /api/budgets/create:", payload);
-        /*
-        await fetch('/api/budgets/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        */
-        closeBudgetModal();
-        await loadBudgetDataFromDB();
-    }
-
-    async function updateBudgetPlanInDB() {
-        const payload = {
-            category: document.getElementById('budgetCategory').value,
-            limitAmount: parseFloat(document.getElementById('monthlyLimit').value),
-            month: currentActiveDate.getMonth() + 1,
-            year: currentActiveDate.getFullYear()
-        };
-
-        console.log("PUT request context sent upstream to /api/budgets/update:", payload);
-        /*
-        await fetch('/api/budgets/update', { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
-        */
-        await loadBudgetDataFromDB();
-    }
-
-    async function deleteBudgetPlanFromDB() {
-        const category = document.getElementById('budgetCategory').value;
-        const m = currentActiveDate.getMonth() + 1;
-        const y = currentActiveDate.getFullYear();
-
-        console.log(`DELETE intent mapped execution tracking to /api/budgets?category=${category}&month=${m}&year=${y}`);
-        /*
-        await fetch(`/api/budgets?category=${category}&month=${m}&year=${y}`, { method: 'DELETE' });
-        */
-        await loadBudgetDataFromDB();
-    }
-
-    // Modal view visibility anchors
-    function openBudgetModal() { document.getElementById('budgetOverlay').classList.add('open'); }
-    function closeBudgetModal() { document.getElementById('budgetOverlay').classList.remove('open'); }
-    function handleBudgetOverlayClick(e) { if (e.target.id === 'budgetOverlay') closeBudgetModal(); }
-
-    // Initialization hook routing on load
-    document.addEventListener("DOMContentLoaded", async () => {
-        updateDateUILabel();
-        await loadBudgetDataFromDB();
-    });
-</script>
+<script src="js/budget.js"></script>
 </body>
 </html>
