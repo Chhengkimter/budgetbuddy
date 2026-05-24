@@ -12,12 +12,13 @@
     font-weight: 800; 
     letter-spacing: -0.6px; 
 }
-.btn-export { padding: 12px 24px; 
+.btn-export { 
+    padding: 12px 24px; 
     background: var(--white); 
-    border: 2px 
-    solid var(--border); 
+    border: 2px solid var(--border); 
     border-radius: var(--radius-sm); 
-    font-size: 20px; font-weight: 700; 
+    font-size: 20px; 
+    font-weight: 700; 
     color: var(--text-sec); 
     cursor: pointer; 
     transition: all 0.15s; 
@@ -27,7 +28,8 @@
     color: var(--text); 
 }
 
-.filter-row { display: flex; 
+.filter-row { 
+    display: flex; 
     gap: 12px; 
     margin-bottom: 10px; 
     flex-wrap: wrap; 
@@ -47,6 +49,17 @@
     background: var(--text); 
     color: var(--white); 
     border-color: var(--text); 
+}
+
+/* ── Recurring pill ── */
+.filter-pill.pill-recurring.active {
+    background: #7C3AED;
+    color: #fff;
+    border-color: #7C3AED;
+}
+.filter-pill.pill-recurring:not(.active):hover {
+    border-color: #7C3AED;
+    color: #7C3AED;
 }
 
 /* Option A Select styles disguised beautifully as selection pills */
@@ -217,12 +230,13 @@
 }
 .tx-date { 
     color: var(--text-sec);
- }
+}
 .pill {
     padding: 6px 16px; 
     border-radius: 20px; 
     font-size: 18px; 
-    font-weight: 700; }
+    font-weight: 700;
+}
 .pill-blue { 
     background: var(--blue-lt); 
     color: var(--blue); 
@@ -246,9 +260,17 @@
     color: var(--green); 
 }
 .tag-saving { 
-    background: var(--purple-lt); 
-    color: var(--purple); 
+    background: var(--blue-lt); 
+    color: var(--blue); 
 }
+
+/* ── Recurring row badge in table ── */
+.tag-recurring {
+    background: #EDE9FE;
+    color: #5B21B6;
+    border: 1px solid #C4B5FD;
+}
+
 .action-buttons { 
     display: flex; 
     gap: 8px; 
@@ -275,10 +297,26 @@
     border-color: var(--red); 
     color: var(--red); 
 }
-/* ==========================================================================
-   ADDED SYSTEM CONTROLS FOR BUDGET-STYLE MONTH NAV & TABLE COLUMNS
-   ========================================================================== */
 
+/* ── Amount colour classes ── */
+.tx-amount-recurring { color: #7C3AED; font-weight: 700; }
+.tx-amount-saving    { color: #0EA5E9; font-weight: 700; }
+
+/* ── Recurring checkbox row in modal ── */
+.recurring-setup-box {
+    margin-top: 14px;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: none;
+}
+.recurring-setup-box.visible { display: block; }
+.recurring-setup-box .form-row-2 { margin-top: 10px; }
+
+/* ==========================================================================
+   MONTH NAV & TABLE COLUMN HELPERS
+   ========================================================================== */
 .month-navigation {
     display: flex;
     align-items: center;
@@ -289,7 +327,6 @@
     font-weight: 600;
     color: #374151;
 }
-
 .month-nav-btn {
     background: none;
     border: none;
@@ -299,7 +336,6 @@
     transition: color 0.2s;
     padding: 0 4px;
 }
-
 .month-nav-btn:hover {
     color: #111827;
 }
@@ -309,21 +345,18 @@
     font-weight: 600;
     color: var(--text-sec);
 }
-
 .column-note-text {
     font-size: 20px;
     font-weight: 600;
     color: var(--text-muted); 
     font-style: italic;
 }
-
 .empty-table-msg {
     text-align: center; 
     padding: 30px !important; 
     color: var(--text-muted);
     font-size: 20px;
 }
-
 
 @media (max-width: 1200px) {
     .page-title { font-size: 32px; }
