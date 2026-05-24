@@ -12,28 +12,19 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    // ── Get all users ─────────────────────────────────
+    
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findByIsActiveTrue();
     }
-
-    // ── Get user by ID ────────────────────────────────
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
-
-    // ── Create a new user ─────────────────────────────
     public User createUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already in use: " + user.getEmail());
         }
-        // NOTE: In a real app, hash the password before saving!
-        // e.g. user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         return userRepository.save(user);
     }
-
-    // ── Update an existing user ───────────────────────
     public User updateUser(Long id, User updatedUser) {
         User existing = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -41,18 +32,15 @@ public class UserService {
         existing.setEmail(updatedUser.getEmail());
         return userRepository.save(existing);
     }
-
-    // ── Delete a user ─────────────────────────────────
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id: " + id);
-        }
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        user.setIsActive(false);
+        userRepository.save(user);
     }
-
-    // ── Login (simple check) ──────────────────────────
     public Optional<User> login(String email, String password) {
         return userRepository.findByEmail(email)
+            .filter(user -> user.getIsActive())
             .filter(user -> user.getPassword().equals(password));
     }
 }

@@ -1,4 +1,4 @@
-# 💰 Budgeting App — OOP Project
+# Budgeting App — OOP Project
 
 A full-stack budgeting application built with:
 - **Frontend**: HTML, CSS, JavaScript
@@ -7,7 +7,7 @@ A full-stack budgeting application built with:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 budgeting-app/

@@ -17,35 +17,30 @@ public class BudgetService {
 
     @Autowired
     private UserRepository userRepository;
-
-    // ── Get all budgets for a user ────────────────────
+    
     public List<Budget> getBudgetsByUser(Long userId) {
-        return budgetRepository.findByUserId(userId);
+        return budgetRepository.findByUserIdAndIsActiveTrue(userId);
     }
-
-    // ── Get a single budget by ID ─────────────────────
     public Optional<Budget> getBudgetById(Long id) {
         return budgetRepository.findById(id);
     }
-
-    // ── Create a new budget ───────────────────────────
     public Budget createBudget(Long userId, Budget budget) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         budget.setUser(user);
         return budgetRepository.save(budget);
     }
-
-    // ── Update a budget ───────────────────────────────
     public Budget updateBudget(Long id, Budget updatedBudget) {
         Budget existing = budgetRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Budget not found with id: " + id));
+
         existing.setName(updatedBudget.getName());
         existing.setTotalAmount(updatedBudget.getTotalAmount());
+        existing.setCategory(updatedBudget.getCategory());
+        existing.setDescription(updatedBudget.getDescription());
+
         return budgetRepository.save(existing);
     }
-
-    // ── Delete a budget ───────────────────────────────
     public void deleteBudget(Long id) {
         if (!budgetRepository.existsById(id)) {
             throw new RuntimeException("Budget not found with id: " + id);

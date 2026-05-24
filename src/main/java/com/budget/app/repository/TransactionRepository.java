@@ -7,10 +7,9 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    
+    List<Transaction> findByBudgetIdAndIsDeletedFalse(Long budgetId);
 
-    // Get all transactions for a specific budget
-    List<Transaction> findByBudgetId(Long budgetId);
-
-    // Get all transactions for a specific user (across all budgets)
-    List<Transaction> findByBudgetUserId(Long userId);
+    
+    List<Transaction> findByBudgetUserIdAndIsDeletedFalse(Long userId);
 }

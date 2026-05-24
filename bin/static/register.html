@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BudDy — Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/register.css">
+</head>
+<body>
+<script src="js/register.js"></script>
+
+<div class="register-card">
+    <div class="logo">
+        <div class="logo-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33"/>
+            </svg>
+        </div>
+        <span class="logo-name">BudDy</span>
+    </div>
+
+    <header>
+        <h1>Create your account</h1>
+        <p class="subtitle">Join thousands of users tracking their success.</p>
+    </header>
+
+    <form id="registerForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Xxxxx" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Xxxxx" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" name="email" placeholder="yourname@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" name="password" placeholder="••••••••••••" required>
+        </div>
+
+        <div id="registerError" style="color: #e74c3c; margin-bottom: 10px; display: none;"></div>
+        <div id="registerSuccess" style="color: #27ae60; margin-bottom: 10px; display: none;"></div>
+
+        <div class="terms-container">
+            <input type="checkbox" id="agree" name="agree" checked required>
+            <label for="agree" class="checkbox-label">
+                I agree to the <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>
+            </label>
+        </div>
+
+        <button type="button" id="registerBtn" class="btn-main" onclick="window.location.href='dashboard.html'">Create Account</button>
+    </form>
+
+    <footer class="form-footer">
+        Already have an account? <a href="login.html">Log in</a>
+    </footer>
+</div>
+
+</body>
+</html>

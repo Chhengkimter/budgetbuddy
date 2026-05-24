@@ -1,0 +1,172 @@
+/* =============================================
+   BUDGET BUDDY — SYMMETRICAL GOALS LAYOUT CSS
+   ============================================= */
+
+/* Main layout matching the strict 2-column channel setup of your prototype */
+.goals-master-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Forces perfect 50/50 alignment across the whole grid */
+    gap: 20px;
+    width: 100%;
+}
+
+/* Sizing Overview Stat Cards */
+.goals-master-grid .stat-card {
+    padding: 30px 32px;
+    display: flex;
+    flex-direction: column;
+    min-height: 160px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.goals-card-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.goals-card-amount {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+    line-height: 1.1;
+}
+
+.goals-card-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.text-green { color: var(--green); }
+.text-dark { color: var(--text); }
+
+/* Interactive Goal Cards */
+.goal-interactive-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.14s, border-color 0.14s;
+}
+
+.goal-interactive-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+.goal-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.goal-emoji {
+    font-size: 26px;
+}
+
+.goal-name {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.goal-amounts-label {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-sec);
+}
+
+/* Progress bars structural rules (Fixed missing view) */
+.progress-container {
+    width: 100%;
+    height: 12px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+}
+
+.goal-card-footer-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.goal-card-footer-text.text-green {
+    color: var(--green);
+}
+
+/* Dashed Add New Button Card */
+.dashed-add-card {
+    border: 2.5px dashed var(--text-muted);
+    background: transparent;
+    box-shadow: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 230px;
+}
+
+.dashed-add-card:hover {
+    background: var(--white);
+    border-color: var(--primary);
+}
+
+.add-inner-element {
+    text-align: center;
+    color: var(--text-sec);
+}
+
+.plus-icon-symbol {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-muted);
+}
+
+.desc-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-sec);
+}
+
+.bottom-helper-caption-text {
+    text-align: center;
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 25px;
+}
+
+@media (max-width: 1200px) {
+    /* Changes from 2 columns to 1 clean single column for small laptops */
+    .goals-master-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .goals-master-grid .stat-card { min-height: auto; padding: 20px; }
+    .goals-card-amount { font-size: 32px; }
+    
+    .goal-interactive-card { padding: 20px; }
+    .goal-name { font-size: 20px; }
+    .goal-amounts-label { font-size: 18px; }
+    .dashed-add-card { min-height: 150px; }
+}

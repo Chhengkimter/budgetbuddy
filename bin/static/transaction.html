@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BudDy — Transactions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/dashboard.css"/>
+    <link rel="stylesheet" href="css/transaction.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar__logo">
+        <div class="navbar__logo-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0
+                       1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12
+                       c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182
+                       s2.9-.879 4.006 0l.415.33"/>
+            </svg>
+        </div>
+        <span class="navbar__logo-name">Budget Buddy</span>
+    </div>
+
+    <div class="navbar__links">
+        <a class="nav__link" href="dashboard.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+            Dashboard
+        </a>
+        <a class="nav__link active" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
+        <a class="nav__link" href="budget.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2
+                       a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10
+                       m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2
+                       a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Budget
+        </a>
+        <a class="nav__link" href="goals.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12
+                       l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Goals
+        </a>
+    </div>
+
+    <div class="navbar__right">
+        <span class="navbar__period">April 2026</span>
+        <button class="btn-add" onclick="openModal()">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Transaction
+        </button>
+        <div class="navbar__avatar">MK</div>
+    </div>
+</nav>
+
+<main class="page">
+    <div class="page-header-row">
+        <h2 class="page-title">All transactions</h2>
+        <button class="btn-export">Export CSV</button>
+    </div>
+
+    <div class="filter-row">
+        <button class="filter-pill active">All</button>
+        <button class="filter-pill">Food</button>
+        <button class="filter-pill">Transport</button>
+        <button class="filter-pill">Housing</button>
+        <button class="filter-pill">Saving</button>
+        <button class="filter-pill">Income</button>
+    </div>
+
+    <div class="search-row">
+        <input type="text" class="search-input" id="tableSearch" placeholder="Search by name or note...">
+        <select class="date-select" id="monthFilter">
+            <option value="2026-04">Apr 2026</option>
+            <option value="2026-03">Mar 2026</option>
+        </select>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="tx-title">Coconut Water</div>
+                        <div class="tx-note">Party snack</div>
+                    </td>
+                    <td><span class="pill pill-blue">Food</span></td>
+                    <td class="tx-date">Apr 20</td>
+                    <td class="amount text-red">-$1.05</td>
+                    <td><span class="type-tag tag-expense">Expense</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit-btn" title="Edit">✏</button>
+                            <button class="action-btn delete-btn" title="Delete">🗑</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="tx-title">Goal – New Dress</div></td>
+                    <td><span class="pill pill-green">Saving</span></td>
+                    <td class="tx-date">Apr 19</td>
+                    <td class="amount text-red">-$100.00</td>
+                    <td><span class="type-tag tag-saving">Saving</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit-btn">✏</button>
+                            <button class="action-btn delete-btn">🗑</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="tx-title">Salary</div></td>
+                    <td><span class="pill pill-green">Income</span></td>
+                    <td class="tx-date">Apr 02</td>
+                    <td class="amount text-green">+$2,300.00</td>
+                    <td><span class="type-tag tag-income">Income</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit-btn">✏</button>
+                            <button class="action-btn delete-btn">🗑</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+        <div class="modal__hdr">
+            <div>
+                <div class="modal__title">Add transaction</div>
+                <div class="modal__sub">Record income, expense, or saving deposit</div>
+            </div>
+            <button class="modal__close" onclick="closeModal()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <form id="addTransactionForm">
+            <div class="type-tabs">
+                <button type="button" class="type-tab active" onclick="setType(this, 'EXPENSE')">Expense</button>
+                <button type="button" class="type-tab" onclick="setType(this, 'INCOME')">Income</button>
+                <button type="button" class="type-tab" onclick="setType(this, 'SAVING')">Saving dep.</button>
+            </div>
+            
+            <input type="hidden" id="transactionType" name="type" value="EXPENSE">
+
+            <div class="modal__amount-wrap">
+                <label class="modal__amount-label">Amount ($)</label>
+                <input class="modal__amount-input" type="number" step="0.01" id="amount" name="amount" placeholder="0.00" value="0.00" required/>
+            </div>
+
+            <div class="modal__form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category" name="category" required>
+                        <option value="FOOD">Food</option>
+                        <option value="TRANSPORTATION">Transportation</option>
+                        <option value="HOUSING">Housing</option>
+                        <option value="ENTERTAINMENT">Entertainment</option>
+                        <option value="HEALTH">Health</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="date" name="date" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Note (optional)</label>
+                <input type="text" id="note" name="note" placeholder="e.g. Party at Anna's house"/>
+            </div>
+
+            <div class="form-group">
+                <label>Link to saving goal (optional)</label>
+                <select id="savingGoal" name="savingGoalId">
+                    <option value="">none</option>
+                    <option value="1">Retirement Fund</option>
+                    <option value="2">New Dress</option>
+                    <option value="3">Health Fund</option>
+                </select>
+            </div>
+
+            <div class="modal__footer">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn-save" onclick="closeModal()">Save transaction</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal()  { document.getElementById('overlay').classList.add('open'); }
+    function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+    function handleOverlayClick(e) { if (e.target.id === 'overlay') closeModal(); }
+    
+    function setType(btn, typeValue) {
+        document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('transactionType').value = typeValue;
+    }
+
+    // Default target date instantiation
+    document.getElementById('date').valueAsDate = new Date();
+</script>
+
+</body>
+</html>

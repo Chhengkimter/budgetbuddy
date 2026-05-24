@@ -1,0 +1,190 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-color: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --primary-color: #1B4FD8;
+    --primary-hover: #1340B0;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --border-color: #E2E8F0;
+    /* Scaled Radius */
+    --radius-lg: 32px;
+    --radius-md: 20px;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 40px; /* High vertical padding */
+}
+
+/* THE GIANT CARD */
+.register-card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 920px; /* Massive Desktop Width */
+    padding: 110px 90px; /* Ultra-deep internal spacing */
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+}
+
+/* GIANT LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 70px;
+}
+
+.logo-icon {
+    width: 64px;
+    height: 64px;
+    background-color: var(--primary-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon svg {
+    width: 34px;
+}
+
+.logo-name {
+    font-size: 36px; /* Scaled up logo text */
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -1px;
+}
+
+/* GIANT TITLES */
+h1 {
+    font-size: 56px; /* Ultra-large Header */
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    letter-spacing: -2.5px;
+}
+
+.subtitle {
+    font-size: 24px; /* Giant Subtitle */
+    color: var(--text-muted);
+    margin-bottom: 75px;
+    font-weight: 500;
+}
+
+/* GIANT FORM ELEMENTS */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.form-group {
+    margin-bottom: 45px;
+}
+
+label {
+    display: block;
+    font-size: 28px; /* Giant Labels */
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-main);
+}
+
+input {
+    width: 100%;
+    padding: 26px 30px; /* Ultra-thick inputs */
+    border: 2.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 22px; /* Giant Input Text */
+    font-family: inherit;
+    color: var(--text-main);
+    transition: all 0.2s ease-in-out;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 8px rgba(27, 79, 216, 0.08);
+}
+
+/* CHECKBOX SCALING */
+.terms-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 70px;
+}
+
+.terms-container input {
+    width: 30px; /* Giant Checkbox */
+    height: 30px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0; /* Align with input */
+}
+
+.checkbox-label a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* GIANT BUTTON */
+.btn-main {
+    width: 100%;
+    padding: 28px;
+    background-color: var(--primary-color);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 22px; /* Giant Button Text */
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-main:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+/* FOOTER SCALING */
+.form-footer {
+    text-align: center;
+    margin-top: 55px;
+    font-size: 21px;
+    color: var(--text-muted);
+}
+
+.form-footer a {
+    color: var(--primary-color);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+/* Tablet Fallback */
+@media (max-width: 960px) {
+    .register-card { 
+        padding: 60px 40px; 
+        max-width: 90%;
+    }
+    .form-row { grid-template-columns: 1fr; }
+    h1 { font-size: 42px; }
+}
