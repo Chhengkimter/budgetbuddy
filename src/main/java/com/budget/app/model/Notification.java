@@ -1,146 +1,73 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = "Notification")
 public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "NotificationID")
+    private Long notificationID;
 
-    @NotBlank(message = "Title is required")
-    @Column(nullable = false, length = 150)
-    private String title;
+    @Column(name = "UserID", nullable = false)
+    private Long userID;
 
-    @NotBlank(message = "Message is required")
-    @Column(nullable = false, length = 500)
-    private String message;
+    /** e.g. "BUDGET_EXCEEDED", "GOAL_REACHED", "RECURRING_GENERATED" */
+    @Column(name = "NotificationType")
+    private String notificationType;
 
-    @NotNull(message = "Type is required")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NotificationType type;
+    @Column(name = "NotificationTitle")
+    private String notificationTitle;
 
-    @NotNull(message = "Read status is required")
-    @Column(nullable = false)
-    private Boolean isRead;
+    @Column(name = "NotificationMessage")
+    private String notificationMessage;
 
-    @Column(name = "created_at")
+    @Column(name = "IsRead")
+    private Boolean isRead = false;
+
+    @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
-    // A notification belongs to one user
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    /** ID of the related Budget / Goal / Transaction (polymorphic reference). */
+    @Column(name = "ReferenceID")
+    private Long referenceID;
 
-    // ── Constructors ──────────────────────────────────
-    public Notification() {
-        this.isRead = false;
-        this.type = NotificationType.GENERAL;
-        this.createdAt = LocalDateTime.now();
+    public Notification() {}
+
+    public Notification(Long userID, String type, String title, String message, Long referenceID) {
+        this.userID              = userID;
+        this.notificationType    = type;
+        this.notificationTitle   = title;
+        this.notificationMessage = message;
+        this.referenceID         = referenceID;
+        this.isRead              = false;
+        this.createdAt           = LocalDateTime.now();
     }
 
-    public Notification(String title, String message, User user) {
-        this();
-        this.title = title;
-        this.message = message;
-        this.user = user;
-    }
+    public Long          getNotificationID()                          { return notificationID; }
+    public void          setNotificationID(Long notificationID)       { this.notificationID = notificationID; }
 
-    public Notification(String title, String message, NotificationType type, User user) {
-        this();
-        this.title = title;
-        this.message = message;
-        this.type = type;
-        this.user = user;
-    }
+    public Long          getUserID()                                  { return userID; }
+    public void          setUserID(Long userID)                       { this.userID = userID; }
 
-    public Notification(String title, String message, NotificationType type, Boolean isRead, User user) {
-        this.title = title;
-        this.message = message;
-        this.type = type;
-        this.isRead = isRead;
-        this.user = user;
-        this.createdAt = LocalDateTime.now();
-    }
+    public String        getNotificationType()                        { return notificationType; }
+    public void          setNotificationType(String type)             { this.notificationType = type; }
 
-    // Auto-set timestamp before saving
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.isRead == null) {
-            this.isRead = false;
-        }
-        if (this.type == null) {
-            this.type = NotificationType.GENERAL;
-        }
-    }
+    public String        getNotificationTitle()                       { return notificationTitle; }
+    public void          setNotificationTitle(String title)           { this.notificationTitle = title; }
 
-    // ── Getters & Setters ─────────────────────────────
-    public Long getId()                                  { return id; }
-    public void setId(Long id)                           { this.id = id; }
+    public String        getNotificationMessage()                     { return notificationMessage; }
+    public void          setNotificationMessage(String message)       { this.notificationMessage = message; }
 
-    public String getTitle()                             { return title; }
-    public void setTitle(String title)                   { this.title = title; }
+    public Boolean       getIsRead()                                  { return isRead; }
+    public void          setIsRead(Boolean isRead)                    { this.isRead = isRead; }
 
-    public String getMessage()                           { return message; }
-    public void setMessage(String message)               { this.message = message; }
+    public LocalDateTime getCreatedAt()                               { return createdAt; }
+    public void          setCreatedAt(LocalDateTime createdAt)        { this.createdAt = createdAt; }
 
-    public NotificationType getType()                    { return type; }
-    public void setType(NotificationType type)           { this.type = type; }
-
-    public Boolean getIsRead()                           { return isRead; }
-    public void setIsRead(Boolean isRead)                { this.isRead = isRead; }
-
-    public LocalDateTime getCreatedAt()                  { return createdAt; }
-    public void setCreatedAt(LocalDateTime dt)           { this.createdAt = dt; }
-
-    public User getUser()                                { return user; }
-    public void setUser(User user)                       { this.user = user; }
-
-    // ── Helper Methods ────────────────────────────────
-    /**
-     * Mark notification as read
-     */
-    public void markAsRead() {
-        this.isRead = true;
-    }
-
-    /**
-     * Mark notification as unread
-     */
-    public void markAsUnread() {
-        this.isRead = false;
-    }
-
-    /**
-     * Toggle read status
-     */
-    public void toggleReadStatus() {
-        this.isRead = !this.isRead;
-    }
-
-    /**
-     * Check if notification is unread
-     * @return true if not read
-     */
-    public boolean isUnread() {
-        return !this.isRead;
-    }
-
-    @Override
-    public String toString() {
-        return "Notification{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", type=" + type +
-                ", isRead=" + isRead +
-                ", createdAt=" + createdAt +
-                '}';
-    }
+    public Long          getReferenceID()                             { return referenceID; }
+    public void          setReferenceID(Long referenceID)             { this.referenceID = referenceID; }
 }

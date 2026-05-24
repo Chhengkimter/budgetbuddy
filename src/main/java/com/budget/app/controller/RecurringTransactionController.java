@@ -1,179 +1,98 @@
 package com.budget.app.controller;
 
-import com.budget.app.model.RecurringTransaction;
-import com.budget.app.model.RecurringTransactionFrequency;
-import com.budget.app.model.Transaction;
+import com.budget.app.dto.RecurringTransactionRequestDTO;
+import com.budget.app.dto.RecurringTransactionResponseDTO;
 import com.budget.app.service.RecurringTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
 
+import java.util.List;
+
+/**
+ * REST controller for recurring transaction templates.
+ *
+ * A RecurringTransaction is a *template* row — it is NOT itself a balance entry.
+ * The scheduler reads active templates and auto-generates real Transaction rows
+ * each month on the configured RecurringDay.
+ *
+ * The "Monthly Saving Goal" feature on the Goals page is one such template:
+ *   RTransactionType = SAVING, linked to a Budget (monthly saving budget) and
+ *   optionally to a Goal.  The generated Transaction rows count toward goal
+ *   progress but are NEVER added to the user's running balance.
+ *
+ * Endpoints:
+ *   GET    /api/recurring?userID=              → List<RecurringTransactionResponseDTO>
+ *   GET    /api/recurring/{id}?userID=         → RecurringTransactionResponseDTO
+ *   POST   /api/recurring?userID=             → RecurringTransactionResponseDTO (201)
+ *   PUT    /api/recurring/{id}?userID=         → RecurringTransactionResponseDTO
+ *   PATCH  /api/recurring/{id}/deactivate?userID= → RecurringTransactionResponseDTO
+ *   DELETE /api/recurring/{id}?userID=         → 204
+ */
 @RestController
-@RequestMapping("/api/recurring-transactions")
+@RequestMapping("/api/recurring")
 @CrossOrigin(origins = "*")
 public class RecurringTransactionController {
 
+    private final RecurringTransactionService recurringService;
+
     @Autowired
-    private RecurringTransactionService recurringTransactionService;
-
-    // ── GET /api/recurring-transactions/budget/{budgetId} ────────
-    @GetMapping("/budget/{budgetId}")
-    public ResponseEntity<List<RecurringTransaction>> getRecurringTransactionsByBudget(@PathVariable Long budgetId) {
-        return ResponseEntity.ok(recurringTransactionService.getRecurringTransactionsByBudget(budgetId));
+    public RecurringTransactionController(RecurringTransactionService recurringService) {
+        this.recurringService = recurringService;
     }
 
-    // ── GET /api/recurring-transactions/budget/{budgetId}/active ─
-    @GetMapping("/budget/{budgetId}/active")
-    public ResponseEntity<List<RecurringTransaction>> getActiveRecurringTransactionsByBudget(@PathVariable Long budgetId) {
-        return ResponseEntity.ok(recurringTransactionService.getActiveRecurringTransactionsByBudget(budgetId));
+    // ── List ──────────────────────────────────────────────────────────────────
+
+    @GetMapping
+    public ResponseEntity<List<RecurringTransactionResponseDTO>> getAll(
+            @RequestParam Long userID) {
+        return ResponseEntity.ok(recurringService.getAllByUser(userID));
     }
 
-    // ── GET /api/recurring-transactions/budget/{budgetId}/due ────
-    @GetMapping("/budget/{budgetId}/due")
-    public ResponseEntity<List<RecurringTransaction>> getDueRecurringTransactions(@PathVariable Long budgetId) {
-        return ResponseEntity.ok(recurringTransactionService.getDueRecurringTransactions(budgetId));
-    }
+    // ── Single ────────────────────────────────────────────────────────────────
 
-    // ── GET /api/recurring-transactions/user/{userId}/due ────────
-    @GetMapping("/user/{userId}/due")
-    public ResponseEntity<List<RecurringTransaction>> getDueRecurringTransactionsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(recurringTransactionService.getDueRecurringTransactionsByUser(userId));
-    }
-
-    // ── GET /api/recurring-transactions/user/{userId} ──────────
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RecurringTransaction>> getRecurringTransactionsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(recurringTransactionService.getRecurringTransactionsByUser(userId));
-    }
-
-    // ── GET /api/recurring-transactions/{id} ────────────────────
     @GetMapping("/{id}")
-    public ResponseEntity<RecurringTransaction> getRecurringTransactionById(@PathVariable Long id) {
-        return recurringTransactionService.getRecurringTransactionById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<RecurringTransactionResponseDTO> getOne(
+            @PathVariable Long id,
+            @RequestParam  Long userID) {
+        return ResponseEntity.ok(recurringService.getByID(id, userID));
     }
 
-    // ── GET /api/recurring-transactions/budget/{budgetId}/type/{type} ─
-    @GetMapping("/budget/{budgetId}/type/{type}")
-    public ResponseEntity<List<RecurringTransaction>> getRecurringTransactionsByType(@PathVariable Long budgetId,
-                                                                                      @PathVariable String type) {
-        try {
-            Transaction.Type transactionType = Transaction.Type.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(recurringTransactionService.getRecurringTransactionsByType(budgetId, transactionType));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PostMapping
+    public ResponseEntity<RecurringTransactionResponseDTO> create(
+            @RequestParam Long userID,
+            @RequestBody  RecurringTransactionRequestDTO req) {
+        RecurringTransactionResponseDTO created = recurringService.create(userID, req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // ── GET /api/recurring-transactions/budget/{budgetId}/frequency/{freq} ──
-    @GetMapping("/budget/{budgetId}/frequency/{freq}")
-    public ResponseEntity<List<RecurringTransaction>> getRecurringTransactionsByFrequency(@PathVariable Long budgetId,
-                                                                                           @PathVariable String freq) {
-        try {
-            RecurringTransactionFrequency frequency = RecurringTransactionFrequency.valueOf(freq.toUpperCase());
-            return ResponseEntity.ok(recurringTransactionService.getRecurringTransactionsByFrequency(budgetId, frequency));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+    // ── Update ────────────────────────────────────────────────────────────────
 
-    // ── POST /api/recurring-transactions/budget/{budgetId} ──────
-    @PostMapping("/budget/{budgetId}")
-    public ResponseEntity<?> createRecurringTransaction(@PathVariable Long budgetId,
-                                                         @Valid @RequestBody RecurringTransaction transaction) {
-        try {
-            RecurringTransaction created = recurringTransactionService.createRecurringTransaction(budgetId, transaction);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
-    // ── PUT /api/recurring-transactions/{id} ────────────────────
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecurringTransaction(@PathVariable Long id,
-                                                         @Valid @RequestBody RecurringTransaction transaction) {
-        try {
-            return ResponseEntity.ok(recurringTransactionService.updateRecurringTransaction(id, transaction));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<RecurringTransactionResponseDTO> update(
+            @PathVariable Long id,
+            @RequestParam  Long userID,
+            @RequestBody   RecurringTransactionRequestDTO req) {
+        return ResponseEntity.ok(recurringService.update(id, userID, req));
     }
 
-    // ── PUT /api/recurring-transactions/{id}/advance ────────────
-    @PutMapping("/{id}/advance")
-    public ResponseEntity<?> advanceToNextOccurrence(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(recurringTransactionService.advanceToNextOccurrence(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    // ── Soft-deactivate (stop without deleting history) ───────────────────────
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<RecurringTransactionResponseDTO> deactivate(
+            @PathVariable Long id,
+            @RequestParam  Long userID) {
+        return ResponseEntity.ok(recurringService.deactivate(id, userID));
     }
 
-    // ── PUT /api/recurring-transactions/{id}/activate ───────────
-    @PutMapping("/{id}/activate")
-    public ResponseEntity<?> activate(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(recurringTransactionService.activate(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // ── Hard delete ───────────────────────────────────────────────────────────
 
-    // ── PUT /api/recurring-transactions/{id}/deactivate ────────
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<?> deactivate(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(recurringTransactionService.deactivate(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // ── PUT /api/recurring-transactions/{id}/toggle ─────────────
-    @PutMapping("/{id}/toggle")
-    public ResponseEntity<?> toggleActive(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(recurringTransactionService.toggleActive(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // ── DELETE /api/recurring-transactions/{id} ─────────────────
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRecurringTransaction(@PathVariable Long id) {
-        try {
-            recurringTransactionService.deleteRecurringTransaction(id);
-            return ResponseEntity.ok(Map.of("message", "Recurring transaction deleted successfully"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // ── GET /api/recurring-transactions/{id}/is-due ──────────────
-    @GetMapping("/{id}/is-due")
-    public ResponseEntity<Map<String, Boolean>> isRecurringTransactionDue(@PathVariable Long id) {
-        boolean isDue = recurringTransactionService.isRecurringTransactionDue(id);
-        return ResponseEntity.ok(Map.of("isDue", isDue));
-    }
-
-    // ── GET /api/recurring-transactions/{id}/is-active ────────────
-    @GetMapping("/{id}/is-active")
-    public ResponseEntity<Map<String, Boolean>> isRecurringTransactionActive(@PathVariable Long id) {
-        boolean isActive = recurringTransactionService.isRecurringTransactionActive(id);
-        return ResponseEntity.ok(Map.of("isActive", isActive));
-    }
-
-    // ── GET /api/recurring-transactions/budget/{budgetId}/count ───
-    @GetMapping("/budget/{budgetId}/count")
-    public ResponseEntity<Map<String, Long>> countActiveRecurringTransactions(@PathVariable Long budgetId) {
-        Long count = recurringTransactionService.countActiveRecurringTransactions(budgetId);
-        return ResponseEntity.ok(Map.of("activeCount", count));
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @RequestParam  Long userID) {
+        recurringService.delete(id, userID);
+        return ResponseEntity.noContent().build();
     }
 }

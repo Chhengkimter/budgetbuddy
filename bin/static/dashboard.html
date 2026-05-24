@@ -36,15 +36,6 @@
             </svg>
             Dashboard
         </a>
-        <a class="nav__link" href="transaction.html">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
-                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
-                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Transactions
-        </a>
         <a class="nav__link" href="budget.html">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -63,17 +54,30 @@
             </svg>
             Goals
         </a>
+        <a class="nav__link" href="transaction.html">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7
+                       a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2
+                       M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Transactions
+        </a>
     </div>
 
     <div class="navbar__right">
-        <span class="navbar__period" id="currentPeriod">April 2026</span>
-        <button class="btn-add" onclick="openModal()">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-            </svg>
-            Add Transaction
-        </button>
-        <div class="navbar__avatar" id="userAvatar" title="Logout" onclick="handleLogout()" style="cursor: pointer;">--</div>
+        <div id="liveTransactionDateDisplay" style="font-size: 22px; font-weight: 700; color: #6B7280;">Date: --/--/----</div>
+
+<script>
+    (function() {
+        const today = new Date();
+        const displayElem = document.getElementById('liveTransactionDateDisplay');
+        if (displayElem) {
+            displayElem.innerText = "Date: " + String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + today.getFullYear();
+        }
+    })();
+</script>
+        <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
     </div>
 </nav>
 
@@ -160,7 +164,7 @@
         <!-- Spending by category -->
         <div class="card">
             <div class="card__hdr">
-                <span class="card__title">Spending by category</span>
+                <span class="card__title">Spending by Budget</span>
             </div>
             <div class="spending__body">
                 <div id="categoryChart">

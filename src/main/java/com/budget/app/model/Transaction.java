@@ -1,107 +1,90 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "Transaction")
 public class Transaction {
 
-    public enum Type {
-        INCOME, EXPENSE
-    }
-
+    public Transaction(Long userID, Long budgetID, Long goalID,
+                   String transactionType, LocalDate transactionDate,
+                   String transactionName, String transactionNote,
+                   BigDecimal transactionAmount) {
+    this.userID            = userID;
+    this.budgetID          = budgetID;
+    this.goalID            = goalID;
+    this.transactionType   = transactionType;
+    this.transactionDate   = transactionDate;
+    this.transactionName   = transactionName;
+    this.transactionNote   = transactionNote;
+    this.transactionAmount = transactionAmount;
+}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "TransactionID")
+    private Long transactionID;
 
-    @NotBlank(message = "Description is required")
-    @Column(nullable = false)
-    private String description;
+    @Column(name = "UserID", nullable = false)
+    private Long userID;
 
-    @Positive(message = "Amount must be positive")
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal amount;
+    /** Nullable — a transaction may not be linked to any budget. */
+    @Column(name = "BudgetID")
+    private Long budgetID;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Type type;  // INCOME or EXPENSE
+    /** Nullable — only populated for Saving-type transactions linked to a goal. */
+    @Column(name = "GoalID")
+    private Long goalID;
 
-    @Column(name = "category_tag")
-    private String categoryTag;
+    @Column(name = "RecurringID")
+    private Long recurringID;
 
-    @Column
-    private String notes;
+    /** "Income" | "Spending" | "Saving" */
+    @Column(name = "TransactionType", nullable = false)
+    private String transactionType;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "TransactionDate", nullable = false)
+    private LocalDate transactionDate;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "TransactionName")
+    private String transactionName;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
+    @Column(name = "TransactionNote")
+    private String transactionNote;
 
-    @ManyToOne
-    @JoinColumn(name = "budget_id", nullable = false)
-    private Budget budget;
+    @Column(name = "TransactionAmount", nullable = false, precision = 15, scale = 2)
+    private BigDecimal transactionAmount;
 
     public Transaction() {}
 
-    public Transaction(String description, BigDecimal amount, Type type, Budget budget) {
-        this.description = description;
-        this.amount      = amount;
-        this.type        = type;
-        this.budget      = budget;
-    }
+    public Long        getTransactionID()                            { return transactionID; }
+    public void        setTransactionID(Long transactionID)          { this.transactionID = transactionID; }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.isDeleted = false;
-    }
+    public Long        getUserID()                                   { return userID; }
+    public void        setUserID(Long userID)                        { this.userID = userID; }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    public Long        getBudgetID()                                 { return budgetID; }
+    public void        setBudgetID(Long budgetID)                    { this.budgetID = budgetID; }
 
-    public Long getId()                           { return id; }
-    public void setId(Long id)                    { this.id = id; }
+    public Long        getGoalID()                                   { return goalID; }
+    public void        setGoalID(Long goalID)                        { this.goalID = goalID; }
 
-    public String getDescription()                { return description; }
-    public void setDescription(String desc)       { this.description = desc; }
+    public String      getTransactionType()                          { return transactionType; }
+    public void        setTransactionType(String transactionType)    { this.transactionType = transactionType; }
 
-    public BigDecimal getAmount()                 { return amount; }
-    public void setAmount(BigDecimal amount)      { this.amount = amount; }
+    public LocalDate   getTransactionDate()                          { return transactionDate; }
+    public void        setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
 
-    public Type getType()                         { return type; }
-    public void setType(Type type)                { this.type = type; }
+    public String      getTransactionName()                          { return transactionName; }
+    public void        setTransactionName(String transactionName)    { this.transactionName = transactionName; }
 
-    public String getCategoryTag()                { return categoryTag; }
-    public void setCategoryTag(String tag)        { this.categoryTag = tag; }
+    public String      getTransactionNote()                          { return transactionNote; }
+    public void        setTransactionNote(String transactionNote)    { this.transactionNote = transactionNote; }
 
-    public String getNotes()                      { return notes; }
-    public void setNotes(String notes)            { this.notes = notes; }
+    public BigDecimal  getTransactionAmount()                        { return transactionAmount; }
+    public void        setTransactionAmount(BigDecimal amount)       { this.transactionAmount = amount; }
 
-    public LocalDateTime getCreatedAt()           { return createdAt; }
-    public void setCreatedAt(LocalDateTime dt)    { this.createdAt = dt; }
-
-    public LocalDateTime getUpdatedAt()           { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime dt)    { this.updatedAt = dt; }
-
-    public Boolean getIsDeleted()                 { return isDeleted; }
-    public void setIsDeleted(Boolean isDeleted)   { this.isDeleted = isDeleted; }
-
-    public Budget getBudget()                     { return budget; }
-    public void setBudget(Budget budget)          { this.budget = budget; }
-
-    @Override
-    public String toString() {
-        return "Transaction{id=" + id + ", desc='" + description + "', amount=" + amount + ", type=" + type + "}";
-    }
+    public Long        getRecurringID()                              { return recurringID; }
+    public void        setRecurringID(Long recurringID)               { this.recurringID = recurringID; }
 }

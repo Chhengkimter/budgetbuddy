@@ -1,60 +1,67 @@
-// ── API Base URL ──────────────────────────────────────────────
-const API = 'http://localhost:8080/api';
+const API_BASE = 'http://localhost:8080/api';
 
-// ── Handle Registration ────────────────────────────────────────
-async function handleRegister(event) {
-    event.preventDefault();
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    const name     = document.getElementById('regName').value.trim();
-    const email    = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPassword').value;
+    const errorBox   = document.getElementById('registerError');
+    const successBox = document.getElementById('registerSuccess');
+    const btn        = document.getElementById('registerBtn');
 
-    const errorDiv   = document.getElementById('registerError');
-    const successDiv = document.getElementById('registerSuccess');
+    // Reset state
+    errorBox.style.display   = 'none';
+    successBox.style.display = 'none';
+    errorBox.textContent     = '';
+    successBox.textContent   = '';
 
-    errorDiv.style.display   = 'none';
-    successDiv.style.display = 'none';
-    errorDiv.textContent   = '';
-    successDiv.textContent = '';
+    // Read form values
+    const payload = {
+        userFirstName:   document.getElementById('firstName').value.trim(),
+        userLastName:    document.getElementById('lastName').value.trim(),
+        userEmail:       document.getElementById('regEmail').value.trim(),
+        userPassword:    document.getElementById('regPassword').value,
+    };
+
+    // Basic front-end guard
+    if (!payload.userFirstName || !payload.userLastName || !payload.userEmail || !payload.userPassword) {
+        errorBox.textContent   = 'Please fill in all fields.';
+        errorBox.style.display = 'block';
+        return;
+    }
+
+    // Loading state
+    btn.textContent  = 'Creating account...';
+    btn.disabled     = true;
 
     try {
-        // Validate input
-        if (!name || !email || !password) {
-            throw new Error('Please fill in all fields');
-        }
-        if (password.length < 6) {
-            throw new Error('Password must be at least 6 characters');
-        }
-
-        // Call the backend registration endpoint
-        const response = await fetch(`${API}/users/register`, {
+        const response = await fetch(`${API_BASE}/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password })
+            body: JSON.stringify(payload)
         });
 
-        const data = await response.json();
+        if (response.ok) {
+            // Registration successful
+            successBox.textContent   = 'Account created! Redirecting to login...';
+            successBox.style.display = 'block';
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Registration failed');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+
+        } else {
+            // Backend returned an error message (e.g. "Email already in use")
+            const errorText        = await response.text();
+            errorBox.textContent   = errorText || 'Registration failed. Please try again.';
+            errorBox.style.display = 'block';
         }
 
-        // Success
-        successDiv.textContent = 'Account created successfully! Redirecting to login...';
-        successDiv.style.display = 'block';
+    } catch (err) {
+        // Network error — backend probably not running
+        errorBox.textContent   = 'Cannot connect to server. Make sure the backend is running.';
+        errorBox.style.display = 'block';
 
-        // Store user data in localStorage (for reference)
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('userName', data.name);
-        localStorage.setItem('userEmail', data.email);
-
-        // Redirect to login page after 2 seconds
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
-
-    } catch (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.style.display = 'block';
+    } finally {
+        btn.textContent = 'Create Account';
+        btn.disabled    = false;
     }
-}
+});

@@ -1,93 +1,69 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "users")
+@Table(name = "User")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "UserID")
+    private Long userID;
 
-    @NotBlank(message = "Name is required")
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "UserFirstName", nullable = false, length = 100)
+    private String userFirstName;
 
-    @Email(message = "Must be a valid email")
-    @NotBlank(message = "Email is required")
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(name = "UserLastName", nullable = false, length = 100)
+    private String userLastName;
 
-    @NotBlank(message = "Password is required")
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "UserEmail", nullable = false, unique = true, length = 150)
+    private String userEmail;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "UserPhoneNumber", length = 20)
+    private String userPhoneNumber;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "UserPassword", nullable = false)
+    private String userPassword;
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
+    @Column(name = "UserCreated")
+    private LocalDateTime userCreated;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Budget> budgets;
+    @Column(name = "UserIsActive")
+    private Boolean userIsActive;
 
-    public User() {}
-
-    public User(String name, String email, String password) {
-        this.name     = name;
-        this.email    = email;
-        this.password = password;
-    }
+    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.isActive  = true;
+    public void prePersist() {
+        this.userCreated = LocalDateTime.now();
+        this.userIsActive = true;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    // ─── Getters & Setters ────────────────────────────────────────────────────
 
-    public Long getId()                        { return id; }
-    public void setId(Long id)                 { this.id = id; }
+    public Long getUserID() { return userID; }
+    public void setUserID(Long userID) { this.userID = userID; }
 
-    public String getName()                    { return name; }
-    public void setName(String name)           { this.name = name; }
+    public String getUserFirstName() { return userFirstName; }
+    public void setUserFirstName(String userFirstName) { this.userFirstName = userFirstName; }
 
-    public String getEmail()                   { return email; }
-    public void setEmail(String email)         { this.email = email; }
+    public String getUserLastName() { return userLastName; }
+    public void setUserLastName(String userLastName) { this.userLastName = userLastName; }
 
-    public String getPassword()                { return password; }
-    public void setPassword(String pw)         { this.password = pw; }
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 
-    public LocalDateTime getCreatedAt()        { return createdAt; }
-    public void setCreatedAt(LocalDateTime dt) { this.createdAt = dt; }
+    public String getUserPhoneNumber() { return userPhoneNumber; }
+    public void setUserPhoneNumber(String userPhoneNumber) { this.userPhoneNumber = userPhoneNumber; }
 
-    public LocalDateTime getUpdatedAt()        { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime dt) { this.updatedAt = dt; }
+    public String getUserPassword() { return userPassword; }
+    public void setUserPassword(String userPassword) { this.userPassword = userPassword; }
 
-    public Boolean getIsActive()               { return isActive; }
-    public void setIsActive(Boolean isActive)  { this.isActive = isActive; }
+    public LocalDateTime getUserCreated() { return userCreated; }
+    public void setUserCreated(LocalDateTime userCreated) { this.userCreated = userCreated; }
 
-    public List<Budget> getBudgets()           { return budgets; }
-    public void setBudgets(List<Budget> b)     { this.budgets = b; }
-
-    @Override
-    public String toString() {
-        return "User{id=" + id + ", name='" + name + "', email='" + email + "', isActive=" + isActive + "}";
-    }
+    public Boolean getUserIsActive() { return userIsActive; }
+    public void setUserIsActive(Boolean userIsActive) { this.userIsActive = userIsActive; }
 }
