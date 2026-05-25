@@ -5,10 +5,13 @@ C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\mod
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\repository\BudgetRepository.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\service\GoalService.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\controller\TransactionController.java
+C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\dto\RecurringTransactionRequestDTO.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\service\UserService.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\service\TransactionService.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\model\User.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\repository\NotificationRepository.java
+C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\dto\TransactionRequestDTO.java
+C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\dto\RecurringTransactionResponseDTO.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\model\Notification.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\dto\BudgetSummaryDTO.java
 C:\Users\M\OneDrive\Documents\Year2\OOP\Project\src\main\java\com\budget\app\service\NotificationService.java

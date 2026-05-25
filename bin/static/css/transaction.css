@@ -358,6 +358,19 @@
     font-size: 20px;
 }
 
+/* ── Amount colour classes ── */
+.tx-amount-recurring { color: #7C3AED; font-weight: 700; }   /* purple — recurring only */
+.tx-amount-saving    { color: #0EA5E9; font-weight: 700; }   /* blue   */
+.tx-amount-income    { color: #16A34A; font-weight: 700; }   /* green  */
+.tx-amount-expense   { color: #DC2626; font-weight: 700; }   /* red    */
+
+/* alias so SPENDING maps to the same style as EXPENSE */
+.tag-spending {
+    background: var(--red-lt);
+    color: var(--red);
+}
+.tx-amount-spending { color: #DC2626; font-weight: 700; }
+
 @media (max-width: 1200px) {
     .page-title { font-size: 32px; }
     .filter-dropdown-pill, .filter-pill, .btn-manage-cats { font-size: 16px; padding: 8px 16px; }

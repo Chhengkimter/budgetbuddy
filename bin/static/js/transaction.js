@@ -117,8 +117,8 @@ function renderTransactions() {
         const typeTagHtml = `<span class="type-tag tag-${tx.transactionType.toLowerCase()}">${tx.transactionType}</span>`;
 
         tr.innerHTML = `
-            <td><strong>${tx.transactionName ?? '—'}</strong></td>
             <td>${tx.transactionDate ?? '—'}</td>
+            <td><strong>${tx.transactionName ?? '—'}</strong></td>
             <td><span class="${amountClass}">${sign}$${Number(tx.transactionAmount ?? 0).toFixed(2)}</span></td>
             <td>${typeTagHtml}</td>
             <td><span class="column-meta-text">${tx.budgetName ?? '—'}</span></td>
