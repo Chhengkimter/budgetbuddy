@@ -158,6 +158,19 @@
     transition: background 0.14s;
 }
 .btn-primary-action:hover { background: #1340B0; }
+.btn-secondary-action {
+    width: 100%;
+    padding: 22px;
+    font-size: 22px;
+    font-weight: 800;
+    background: #10B981;
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.14s;
+}
+.btn-secondary-action:hover { background: #0f8f6d; }
 .btn-fit { width: fit-content; padding: 18px 40px; margin-top: 10px; }
 
 .form-double-actions-footer { 

@@ -132,7 +132,7 @@ public class AuditLog {
      * @return user ID or null
      */
     public Long getUserId() {
-        return user != null ? user.getId() : null;
+        return user != null ? user.getUserID() : null;
     }
 
     /**
@@ -140,7 +140,7 @@ public class AuditLog {
      * @return user email or "SYSTEM"
      */
     public String getUserEmail() {
-        return user != null ? user.getEmail() : "SYSTEM";
+        return user != null ? user.getUserEmail() : "SYSTEM";
     }
 
     /**

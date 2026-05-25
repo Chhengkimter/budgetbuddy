@@ -171,41 +171,7 @@
             <div class="goals-card-sub" id="displayMonthlyDeposited">$450 deposited this month</div>
         </div>
 
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('retirement')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">🏦</span>
-                <span class="goal-name">Retirement Fund</span>
-            </div>
-            <div class="goal-amounts-label">$3,000 / $30,000</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 10%; background: var(--primary);"></div>
-            </div>
-            <div class="goal-card-footer-text">$1,500 per 2026</div>
-        </div>
-
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('dress')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">👗</span>
-                <span class="goal-name">New Dress</span>
-            </div>
-            <div class="goal-amounts-label">$78 / $100</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 78%; background: var(--green);"></div>
-            </div>
-            <div class="goal-card-footer-text text-green">Almost there!</div>
-        </div>
-
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('china_trip')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">✈️</span>
-                <span class="goal-name">Trip to China</span>
-            </div>
-            <div class="goal-amounts-label">$1,080 / $1,500</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 72%; background: var(--blue);"></div>
-            </div>
-            <div class="goal-card-footer-text">$210/mo needed</div>
-        </div>
+        <div id="goalsList" class="goals-card-grid"></div>
 
         <div class="card goal-interactive-card dashed-add-card" onclick="navigateToGoalDetails('new')">
             <div class="add-inner-element">
@@ -219,59 +185,6 @@
     <p class="bottom-helper-caption-text">Click any goal to view details and deposit →</p>
 </main>
 
-<script>
-    let currentActiveDate = new Date(2026, 4, 1); 
-
-    // Helper to send the unique ID in the URL to goal_details.html
-    function navigateToGoalDetails(goalId) {
-        window.location.href = `goal_details.html?id=${goalId}`;
-    }
-
-    // ==========================================
-    // DATA GRABBER (For Monthly Card Controls Syncing)
-    // ==========================================
-    async function fetchGoalDataFromDatabase(year, month) {
-        try {
-            const lookupKey = `${year}-${String(month).padStart(2, '0')}`;
-            const localMockDatabase = {
-                "2026-04": { totalSaved: "$8,490", targetText: "$500", depositedText: "$500 deposited this month", targetVal: 500, depositedVal: 500 },
-                "2026-05": { totalSaved: "$8,940", targetText: "$600", depositedText: "$450 deposited this month", targetVal: 600, depositedVal: 450 },
-                "2026-06": { totalSaved: "$9,340", targetText: "$700", depositedText: "$0 deposited this month", targetVal: 700, depositedVal: 0 }
-            };
-            return localMockDatabase[lookupKey] || { totalSaved: "$8,940", targetText: "$600", depositedText: "$0 deposited this month", targetVal: 600, depositedVal: 0 };
-        } catch (error) {
-            console.error("Database tracking issues:", error);
-        }
-    }
-
-    async function renderGoalsInterface() {
-        const activeYear = currentActiveDate.getFullYear();
-        const activeMonthInt = currentActiveDate.getMonth() + 1;
-
-        const data = await fetchGoalDataFromDatabase(activeYear, activeMonthInt);
-        const textFormattedMonth = currentActiveDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-        document.getElementById('activeMonthLabel').innerText = textFormattedMonth;
-        document.getElementById('liveTransactionDateDisplay').innerText = "Date: " + textFormattedMonth;
-        document.getElementById('displayTotalSaved').innerText = data.totalSaved;
-        document.getElementById('displayMonthlyTarget').innerText = data.targetText;
-        document.getElementById('displayMonthlyDeposited').innerText = data.depositedText;
-
-        let progressPercent = 0;
-        if (data.targetVal > 0) {
-            progressPercent = Math.min((data.depositedVal / data.targetVal) * 100, 100);
-        }
-        document.getElementById('monthlyGoalProgressBarFill').style.width = `${progressPercent}%`;
-    }
-
-    function adjustSelectedMonth(directionStep) {
-        currentActiveDate.setMonth(currentActiveDate.getMonth() + directionStep);
-        renderGoalsInterface();
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        renderGoalsInterface();
-    });
-</script>
+<script src="js/goals.js"></script>
 </body>
 </html>
