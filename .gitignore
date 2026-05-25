@@ -1,0 +1,15 @@
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+
+# ── Maven build output ────────────────────────────────────────────────────────
+target/
+bin/
+
+# ── Local-only config (DB passwords etc.) ────────────────────────────────────
+src/main/resources/application-local.properties
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
