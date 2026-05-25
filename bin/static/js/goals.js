@@ -4,7 +4,9 @@ const API = '/api';
 let currentActiveDate = new Date();
 
 function getUserID() {
-    return localStorage.getItem('userID') || localStorage.getItem('userId') || 1;
+    const uid = localStorage.getItem('userID') || localStorage.getItem('userId') || '1';
+    console.log('goals.js getUserID ->', uid);
+    return uid;
 }
 
 function formatCurrency(value) {
@@ -112,9 +114,11 @@ function adjustSelectedMonth(directionStep) {
 }
 
 function navigateToGoalDetails(goalId) {
+    console.log('navigateToGoalDetails click ->', goalId);
     window.location.href = `goal_details.html?id=${encodeURIComponent(goalId)}`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+    console.log('goals.js DOMContentLoaded');
     renderGoalsInterface();
 });

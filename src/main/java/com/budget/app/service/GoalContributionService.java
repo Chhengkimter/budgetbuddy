@@ -1,9 +1,9 @@
 package com.budget.app.service;
 
 import com.budget.app.model.GoalContribution;
-import com.budget.app.model.SavingsGoal;
+import com.budget.app.model.Goal;
 import com.budget.app.repository.GoalContributionRepository;
-import com.budget.app.repository.SavingsGoalRepository;
+import com.budget.app.repository.GoalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -18,11 +18,11 @@ public class GoalContributionService {
     private GoalContributionRepository goalContributionRepository;
 
     @Autowired
-    private SavingsGoalRepository savingsGoalRepository;
+    private GoalRepository goalRepository;
 
     // ── Get all contributions for a goal ──────────────
     public List<GoalContribution> getContributionsByGoal(Long goalId) {
-        return goalContributionRepository.findByGoalIdOrderByContributedAtDesc(goalId);
+        return goalContributionRepository.findByGoal_GoalIDOrderByContributedAtDesc(goalId);
     }
 
     // ── Get a single contribution by ID ───────────────
@@ -32,37 +32,25 @@ public class GoalContributionService {
 
     // ── Create a new contribution ────────────────────
     public GoalContribution createContribution(Long goalId, GoalContribution contribution) {
-        SavingsGoal goal = savingsGoalRepository.findById(goalId)
-            .orElseThrow(() -> new RuntimeException("Savings goal not found with id: " + goalId));
-        
+        Goal goal = goalRepository.findById(goalId)
+            .orElseThrow(() -> new RuntimeException("Goal not found with id: " + goalId));
+
         contribution.setGoal(goal);
         contribution.setContributedAt(LocalDateTime.now());
-        
+
         // Save contribution
-        GoalContribution saved = goalContributionRepository.save(contribution);
-        
-        // Update goal's current amount
-        goal.addSavings(contribution.getAmount());
-        savingsGoalRepository.save(goal);
-        
-        return saved;
+        return goalContributionRepository.save(contribution);
     }
 
     // ── Create contribution with just amount ─────────
     public GoalContribution createContribution(Long goalId, BigDecimal amount, String notes) {
-        SavingsGoal goal = savingsGoalRepository.findById(goalId)
-            .orElseThrow(() -> new RuntimeException("Savings goal not found with id: " + goalId));
-        
+        Goal goal = goalRepository.findById(goalId)
+            .orElseThrow(() -> new RuntimeException("Goal not found with id: " + goalId));
+
         GoalContribution contribution = new GoalContribution(amount, notes, goal);
-        
+
         // Save contribution
-        GoalContribution saved = goalContributionRepository.save(contribution);
-        
-        // Update goal's current amount
-        goal.addSavings(amount);
-        savingsGoalRepository.save(goal);
-        
-        return saved;
+        return goalContributionRepository.save(contribution);
     }
 
     // ── Update a contribution ────────────────────────
@@ -77,39 +65,21 @@ public class GoalContributionService {
         existing.setAmount(newAmount);
         existing.setNotes(updatedContribution.getNotes());
         
-        // Save updated contribution
-        GoalContribution saved = goalContributionRepository.save(existing);
-        
-        // Adjust goal's current amount if contribution amount changed
-        if (oldAmount.compareTo(newAmount) != 0) {
-            SavingsGoal goal = existing.getGoal();
-            BigDecimal difference = newAmount.subtract(oldAmount);
-            goal.setCurrentAmount(goal.getCurrentAmount().add(difference));
-            goal.setUpdatedAt(LocalDateTime.now());
-            savingsGoalRepository.save(goal);
-        }
-        
-        return saved;
+        // Save updated contribution (no Goal aggregate fields to update in Goal entity)
+        return goalContributionRepository.save(existing);
     }
 
     // ── Delete a contribution ────────────────────────
     public void deleteContribution(Long id) {
         GoalContribution contribution = goalContributionRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Contribution not found with id: " + id));
-        
-        // Get the goal and subtract the contribution amount
-        SavingsGoal goal = contribution.getGoal();
-        goal.setCurrentAmount(goal.getCurrentAmount().subtract(contribution.getAmount()));
-        goal.setUpdatedAt(LocalDateTime.now());
-        savingsGoalRepository.save(goal);
-        
-        // Delete contribution
+        // Delete contribution (no Goal aggregate fields to update)
         goalContributionRepository.deleteById(id);
     }
 
     // ── Get total contributions for a goal ────────────
     public BigDecimal getTotalContributions(Long goalId) {
-        List<GoalContribution> contributions = goalContributionRepository.findByGoalId(goalId);
+        List<GoalContribution> contributions = goalContributionRepository.findByGoal_GoalID(goalId);
         return contributions.stream()
             .map(GoalContribution::getAmount)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -117,11 +87,11 @@ public class GoalContributionService {
 
     // ── Count contributions for a goal ───────────────
     public Long countContributions(Long goalId) {
-        return goalContributionRepository.countByGoalId(goalId);
+        return goalContributionRepository.countByGoal_GoalID(goalId);
     }
 
     // ── Check if contribution exists ─────────────────
     public boolean contributionExists(Long id, Long goalId) {
-        return goalContributionRepository.existsByIdAndGoalId(id, goalId);
+        return goalContributionRepository.existsByIdAndGoal_GoalID(id, goalId);
     }
 }

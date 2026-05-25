@@ -1,6 +1,7 @@
 package com.budget.app.model;
 
 import jakarta.persistence.*;
+import com.budget.app.model.Goal;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
@@ -25,21 +26,21 @@ public class GoalContribution {
     @Column(name = "contributed_at")
     private LocalDateTime contributedAt;
 
-    // A contribution belongs to one savings goal
+    // A contribution belongs to one savings goal (now mapped to Goal entity)
     @ManyToOne
     @JoinColumn(name = "goal_id", nullable = false)
-    private SavingsGoal goal;
+    private Goal goal;
 
     // ── Constructors ──────────────────────────────────
     public GoalContribution() {}
 
-    public GoalContribution(BigDecimal amount, SavingsGoal goal) {
+    public GoalContribution(BigDecimal amount, Goal goal) {
         this.amount = amount;
         this.goal = goal;
         this.contributedAt = LocalDateTime.now();
     }
 
-    public GoalContribution(BigDecimal amount, String notes, SavingsGoal goal) {
+    public GoalContribution(BigDecimal amount, String notes, Goal goal) {
         this.amount = amount;
         this.notes = notes;
         this.goal = goal;
@@ -65,8 +66,8 @@ public class GoalContribution {
     public LocalDateTime getContributedAt()              { return contributedAt; }
     public void setContributedAt(LocalDateTime dt)       { this.contributedAt = dt; }
 
-    public SavingsGoal getGoal()                         { return goal; }
-    public void setGoal(SavingsGoal goal)                { this.goal = goal; }
+    public Goal getGoal()                                 { return goal; }
+    public void setGoal(Goal goal)                        { this.goal = goal; }
 
     @Override
     public String toString() {

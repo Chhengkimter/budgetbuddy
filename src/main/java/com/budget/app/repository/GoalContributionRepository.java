@@ -14,14 +14,14 @@ public interface GoalContributionRepository extends JpaRepository<GoalContributi
      * @param goalId the savings goal ID
      * @return list of contributions
      */
-    List<GoalContribution> findByGoalId(Long goalId);
+    List<GoalContribution> findByGoal_GoalID(Long goalId);
 
     /**
      * Find all contributions for a goal ordered by date descending
      * @param goalId the savings goal ID
      * @return list of contributions ordered by contributed_at DESC
      */
-    List<GoalContribution> findByGoalIdOrderByContributedAtDesc(Long goalId);
+    List<GoalContribution> findByGoal_GoalIDOrderByContributedAtDesc(Long goalId);
 
     /**
      * Find contributions for a goal within a date range
@@ -30,14 +30,14 @@ public interface GoalContributionRepository extends JpaRepository<GoalContributi
      * @param endDate the end date
      * @return list of contributions within the date range
      */
-    List<GoalContribution> findByGoalIdAndContributedAtBetween(Long goalId, LocalDateTime startDate, LocalDateTime endDate);
+    List<GoalContribution> findByGoal_GoalIDAndContributedAtBetween(Long goalId, LocalDateTime startDate, LocalDateTime endDate);
 
     /**
      * Count total contributions for a goal
      * @param goalId the savings goal ID
      * @return count of contributions
      */
-    Long countByGoalId(Long goalId);
+    Long countByGoal_GoalID(Long goalId);
 
     /**
      * Check if a contribution exists
@@ -45,5 +45,6 @@ public interface GoalContributionRepository extends JpaRepository<GoalContributi
      * @param goalId the savings goal ID
      * @return true if exists, false otherwise
      */
-    boolean existsByIdAndGoalId(Long id, Long goalId);
+    boolean existsByIdAndGoal_GoalID(Long id, Long goalId);
+
 }

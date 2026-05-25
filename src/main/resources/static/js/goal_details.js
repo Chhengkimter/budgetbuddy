@@ -1,7 +1,9 @@
 const API = '/api';
 
 function getUserID() {
-    return localStorage.getItem('userID') || localStorage.getItem('userId') || 1;
+    const uid = localStorage.getItem('userID') || localStorage.getItem('userId') || '1';
+    console.log('goal_details.js getUserID ->', uid);
+    return uid;
 }
 
 function getGoalIdFromQuery() {
@@ -85,7 +87,9 @@ async function fetchGoal(goalId) {
 
 async function completeGoal(goalId) {
     const userID = getUserID();
-    const res = await fetch(`${API}/goals/${encodeURIComponent(goalId)}/complete?userID=${encodeURIComponent(userID)}`, {
+    const url = `${API}/goals/${encodeURIComponent(goalId)}/complete?userID=${encodeURIComponent(userID)}`;
+    console.log('completeGoal -> PATCH', url);
+    const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' }
     });
@@ -97,7 +101,9 @@ async function completeGoal(goalId) {
 
 async function deleteGoal(goalId) {
     const userID = getUserID();
-    const res = await fetch(`${API}/goals/${encodeURIComponent(goalId)}?userID=${encodeURIComponent(userID)}`, {
+    const url = `${API}/goals/${encodeURIComponent(goalId)}?userID=${encodeURIComponent(userID)}`;
+    console.log('deleteGoal -> DELETE', url);
+    const res = await fetch(url, {
         method: 'DELETE'
     });
     if (!res.ok) {
@@ -126,8 +132,9 @@ async function updateGoal(goalId) {
         goalAmount,
         goalTargetDate
     };
-
-    const res = await fetch(`${API}/goals/${encodeURIComponent(goalId)}?userID=${encodeURIComponent(userID)}`, {
+    const url = `${API}/goals/${encodeURIComponent(goalId)}?userID=${encodeURIComponent(userID)}`;
+    console.log('updateGoal -> PUT', url, payload);
+    const res = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -145,6 +152,7 @@ function showMessage(message) {
 function bindGoalActions(goalId) {
     const saveBtn = document.getElementById('btnMainSettingsSubmit');
     if (saveBtn) saveBtn.addEventListener('click', async () => {
+        console.log('btnMainSettingsSubmit clicked ->', goalId);
         try {
             await updateGoal(goalId);
             showMessage('Goal updated successfully.');
@@ -157,6 +165,7 @@ function bindGoalActions(goalId) {
     });
     const delBtn = document.getElementById('btnDangerSettingsAction');
     if (delBtn) delBtn.addEventListener('click', async () => {
+        console.log('btnDangerSettingsAction clicked ->', goalId);
         if (!window.confirm('Delete this goal? This cannot be undone.')) return;
         try {
             await deleteGoal(goalId);
@@ -169,6 +178,7 @@ function bindGoalActions(goalId) {
 
     const completeBtn = document.getElementById('btnCompleteGoal');
     if (completeBtn) completeBtn.addEventListener('click', async () => {
+        console.log('btnCompleteGoal clicked ->', goalId);
         try {
             await completeGoal(goalId);
             showMessage('Goal marked complete.');
@@ -183,6 +193,7 @@ function bindGoalActions(goalId) {
     // Deposit button (creates a quick contribution)
     const depositBtn = document.getElementById('btnDeposit');
     if (depositBtn) depositBtn.addEventListener('click', async (e) => {
+        console.log('btnDeposit clicked ->', goalId);
         try {
             const amountEl = document.getElementById('depAmount');
             const dateEl = document.getElementById('depDate');
@@ -196,7 +207,9 @@ function bindGoalActions(goalId) {
             }
 
             // Use quick contribution endpoint
-            const res = await fetch(`${API}/contributions/goal/${encodeURIComponent(goalId)}/quick`, {
+            const url = `${API}/contributions/goal/${encodeURIComponent(goalId)}/quick`;
+            console.log('deposit -> POST', url, { amount: String(amount), notes });
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: String(amount), notes })

@@ -44,6 +44,10 @@ public class Goal {
     public Long      getGoalID()                        { return goalID; }
     public void      setGoalID(Long goalID)             { this.goalID = goalID; }
 
+    // Alias property name for repositories that expect `id`
+    public Long getId() { return this.goalID; }
+    public void setId(Long id) { this.goalID = id; }
+
     public Long      getUserID()                        { return userID; }
     public void      setUserID(Long userID)             { this.userID = userID; }
 
