@@ -45,7 +45,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             successBox.style.display = 'block';
 
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }, 1500);
 
         } else {

@@ -2,9 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <meta http-equiv="refresh" content="0;url=login.html"/>
-    <title>BudDy</title>
-    <script>window.location.replace("login.html");</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BudDy — Log In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/login.css">
 </head>
-<body></body>
+<body>
+
+<div class="register-card">
+    <div class="logo">
+        <div class="logo-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33"/>
+            </svg>
+        </div>
+        <span class="logo-name">BudDy</span>
+    </div>
+
+    <header>
+        <h1>Log in to BudDy</h1>
+        <p class="subtitle">Welcome back! Please enter your details.</p>
+    </header>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" name="email" placeholder="yourname@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="password" placeholder="••••••••••••" required>
+        </div>
+
+        <div id="loginError" style="color: #e74c3c; margin-bottom: 10px; display: none;"></div>
+
+        <div class="helper-row">
+            <div class="terms-container">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember" class="checkbox-label">Remember me</label>
+            </div>
+            <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-main">Log In</button>
+    </form>
+
+    <footer class="form-footer">
+        Don't have an account? <a href="register.html">Sign up</a>
+    </footer>
+</div>
+
+<script src="js/login.js"></script>
+</body>
 </html>

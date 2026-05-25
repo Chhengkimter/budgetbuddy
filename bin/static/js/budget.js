@@ -2,7 +2,7 @@ const API_BASE = 'http://localhost:8080/api';
 
 // ── Auth guard — redirect to login if no user in session ─────────────────────
 const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'null');
-if (!currentUser) window.location.href = 'login.html';
+if (!currentUser) window.location.href = 'index.html';
 const USER_ID = currentUser?.userID;
 
 // ── Global state ──────────────────────────────────────────────────────────────

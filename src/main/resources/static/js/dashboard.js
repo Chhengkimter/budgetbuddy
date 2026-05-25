@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!isLoggedIn || !userId) {
         // Redirect to login if not logged in
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return;
     }
 
