@@ -1,13 +1,14 @@
 package com.budget.app.service;
 
+import com.budget.app.dto.GoalCompleteResponseDTO;
 import com.budget.app.dto.GoalOverviewDTO;
 import com.budget.app.dto.GoalRequestDTO;
 import com.budget.app.dto.GoalResponseDTO;
 import com.budget.app.model.Goal;
+import com.budget.app.model.Transaction;
 import com.budget.app.repository.BudgetRepository;
 import com.budget.app.repository.GoalRepository;
 import com.budget.app.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,7 +26,6 @@ public class GoalService {
     private final TransactionRepository txRepo;
     private final BudgetRepository      budgetRepo;
 
-    @Autowired
     public GoalService(GoalRepository goalRepo,
                        TransactionRepository txRepo,
                        BudgetRepository budgetRepo) {
@@ -92,6 +92,10 @@ public class GoalService {
     public GoalResponseDTO createGoal(Long userID, GoalRequestDTO req) {
         validateRequest(req);
         Goal goal = new Goal(userID, req.getGoalName(), req.getGoalAmount(), req.getGoalTargetDate());
+        goal.setMonthlyTarget(req.getMonthlyTarget());
+        goal.setAutoMonthly(req.getAutoMonthly() != null ? req.getAutoMonthly() : false);
+        goal.setIsCompleted(false);
+        goal.setCurrentSaved(BigDecimal.ZERO);
         return toResponseDTO(goalRepo.save(goal));
     }
 
@@ -104,16 +108,82 @@ public class GoalService {
         goal.setGoalName(req.getGoalName());
         goal.setGoalAmount(req.getGoalAmount());
         goal.setGoalTargetDate(req.getGoalTargetDate());
+        goal.setMonthlyTarget(req.getMonthlyTarget());
+        goal.setAutoMonthly(req.getAutoMonthly() != null ? req.getAutoMonthly() : false);
         return toResponseDTO(goalRepo.save(goal));
     }
 
-    /** Marks a goal as finished (soft-complete). */
-    public GoalResponseDTO completeGoal(Long goalID, Long userID) {
+    /** Marks a goal as finished (soft-complete) and creates a transfer transaction for remaining amount. */
+    public GoalCompleteResponseDTO completeGoal(Long goalID, Long userID) {
         Goal goal = goalRepo.findByGoalIDAndUserID(goalID, userID)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Goal not found"));
+
+        goal.setIsCompleted(true);
         goal.setGoalFinishedDate(LocalDate.now());
-        return toResponseDTO(goalRepo.save(goal));
+
+        // Calculate remaining amount not yet saved
+        BigDecimal currentSaved = txRepo.sumSavedByGoal(goalID);
+        BigDecimal remaining = goal.getGoalAmount().subtract(currentSaved);
+        BigDecimal transferredAmount = BigDecimal.ZERO;
+
+        // If there's a remaining amount, create a completion transfer transaction
+        if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+            Transaction completionTx = new Transaction(
+                    userID,
+                    null,  // no budget link
+                    goalID,
+                    "SAVING",
+                    LocalDate.now(),
+                    "Goal completion transfer",
+                    null,
+                    remaining
+            );
+            txRepo.save(completionTx);
+            transferredAmount = remaining;
+        }
+
+        Goal savedGoal = goalRepo.save(goal);
+        String message = transferredAmount.compareTo(BigDecimal.ZERO) > 0
+                ? "Goal completed. Transfer of " + transferredAmount + " created."
+                : "Goal completed. No additional transfer needed.";
+
+        GoalCompleteResponseDTO response = new GoalCompleteResponseDTO();
+        response.setGoal(toResponseDTO(savedGoal));
+        response.setTransferredAmount(transferredAmount);
+        response.setMessage(message);
+        return response;
+    }
+
+    /** Deposits an amount to a goal as a saving transaction. */
+    public GoalResponseDTO depositToGoal(Long goalID, Long userID, BigDecimal amount, LocalDate depositDate) {
+        Goal goal = goalRepo.findByGoalIDAndUserID(goalID, userID)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Goal not found"));
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deposit amount must be positive");
+        }
+
+        // Create a saving transaction for this deposit
+        Transaction deposit = new Transaction(
+                userID,
+                null,  // no budget link
+                goalID,
+                "SAVING",
+                depositDate != null ? depositDate : LocalDate.now(),
+                "Goal deposit",
+                null,
+                amount
+        );
+        txRepo.save(deposit);
+
+        // Update goal's currentSaved field
+        BigDecimal newSaved = txRepo.sumSavedByGoal(goalID);
+        goal.setCurrentSaved(newSaved);
+        goalRepo.save(goal);
+
+        return toResponseDTO(goal);
     }
 
     public void deleteGoal(Long goalID, Long userID) {
@@ -127,23 +197,35 @@ public class GoalService {
 
     private GoalResponseDTO toResponseDTO(Goal goal) {
         BigDecimal saved = txRepo.sumSavedByGoal(goal.getGoalID());
-        int pct = 0;
+
+        double pct = 0.0;
         if (goal.getGoalAmount() != null && goal.getGoalAmount().compareTo(BigDecimal.ZERO) > 0) {
-            pct = saved.multiply(BigDecimal.valueOf(100))
-                    .divide(goal.getGoalAmount(), 0, RoundingMode.HALF_UP)
+            pct = saved
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(goal.getGoalAmount(), 2, RoundingMode.HALF_UP)
                     .min(BigDecimal.valueOf(100))
-                    .intValue();
+                    .doubleValue();
+        }
+
+        BigDecimal remaining = null;
+        if (goal.getGoalAmount() != null) {
+            remaining = goal.getGoalAmount().subtract(saved);
         }
 
         GoalResponseDTO dto = new GoalResponseDTO();
         dto.setGoalID(goal.getGoalID());
+        dto.setUserID(goal.getUserID());
         dto.setGoalName(goal.getGoalName());
         dto.setGoalAmount(goal.getGoalAmount());
-        dto.setSavedAmount(saved);
+        dto.setCurrentSaved(saved);
+        dto.setMonthlyTarget(goal.getMonthlyTarget());
+        dto.setAutoMonthly(goal.getAutoMonthly());
+        dto.setIsCompleted(goal.getIsCompleted());
         dto.setGoalCreatedDate(goal.getGoalCreatedDate());
         dto.setGoalTargetDate(goal.getGoalTargetDate());
         dto.setGoalFinishedDate(goal.getGoalFinishedDate());
         dto.setProgressPercent(pct);
+        dto.setRemainingAmount(remaining);
         return dto;
     }
 

@@ -175,117 +175,474 @@
     </div>
 </main>
 
+<!-- Flatpickr for date picking -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
-    document.getElementById('depDate').valueAsDate = new Date();
+// ==========================================
+// Global State
+// ==========================================
+let userID = null;
+let goalID = null;
+let currentGoal = null;
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const goalId = urlParams.get('id');
+// ==========================================
+// Initialization
+// ==========================================
+document.addEventListener('DOMContentLoaded', async () => {
+    // Get userID from localStorage
+    userID = localStorage.getItem('userID');
+    if (!userID) {
+        alert('User ID not found. Please log in first.');
+        window.location.href = 'index.html';
+        return;
+    }
 
-        // Static Local Mock Database (Simulating what your Spring Boot API will provide later)
-        const sampleGoalsDb = {
-            "retirement": {
-                emoji: "🏦", title: "Retirement Fund", progress: "10%", progressColor: "var(--primary)",
-                saved: "$3,000", remain: "$27,000", needed: "$1,500", targetRaw: 30000, monthlyRaw: 1500, dateRaw: "Ongoing",
-                history: `
-                    <div class="ledger-row-item">
-                        <div class="item-left-cell"><p class="main-title">Monthly Allocation</p><p class="sub-date">May 02</p></div>
-                        <div class="item-right-cell"><span class="green-tx">+$1,500</span><button class="delete-icon-btn">🗑</button></div>
-                    </div>
-                    <div class="ledger-row-item">
-                        <div class="item-left-cell"><p class="main-title">Initial Transfer</p><p class="sub-date">Apr 11</p></div>
-                        <div class="item-right-cell"><span class="green-tx">+$1,500</span><button class="delete-icon-btn">🗑</button></div>
-                    </div>`
-            },
-            "dress": {
-                emoji: "👗", title: "New Dress", progress: "78%", progressColor: "var(--green)",
-                saved: "$78", remain: "$22", needed: "$22", targetRaw: 100, monthlyRaw: 22, dateRaw: "June 2026",
-                history: `
-                    <div class="ledger-row-item">
-                        <div class="item-left-cell"><p class="main-title">Saved Birthday Cash</p><p class="sub-date">May 14</p></div>
-                        <div class="item-right-cell"><span class="green-tx">+$78</span><button class="delete-icon-btn">🗑</button></div>
-                    </div>`
-            },
-            "china_trip": {
-                emoji: "✈️", title: "Trip to China", progress: "72%", progressColor: "var(--blue)",
-                saved: "$1,080", remain: "$420", needed: "$210", targetRaw: 1500, monthlyRaw: 210, dateRaw: "Dec 2026",
-                history: `
-                    <div class="ledger-row-item">
-                        <div class="item-left-cell"><p class="main-title">Deposit</p><p class="sub-date">Apr 20</p></div>
-                        <div class="item-right-cell"><span class="green-tx">+$100</span><button class="delete-icon-btn">🗑</button></div>
-                    </div>
-                    <div class="ledger-row-item">
-                        <div class="item-left-cell"><p class="main-title">Deposit</p><p class="sub-date">Mar 21</p></div>
-                        <div class="item-right-cell"><span class="green-tx">+$210</span><button class="delete-icon-btn">🗑</button></div>
-                    </div>`
-            }
-        };
+    // Get goalID from URL query param
+    const urlParams = new URLSearchParams(window.location.search);
+    goalID = urlParams.get('goalID') || urlParams.get('id'); // Support both 'goalID' and 'id'
+    const action = urlParams.get('action');
 
-        if (goalId === 'new') {
-            // ==========================================
-            // STATE A: Transforming page to Create a New Goal
-            // ==========================================
-            document.getElementById('displayBannerEmoji').innerText = "✨";
-            document.getElementById('displayBannerTitle').innerText = "Create New Saving Goal";
-            
-            // Hide progress tracking metrics completely since the goal has no value yet
-            document.getElementById('bannerProgressWrapper').style.display = "none";
-            document.getElementById('leftWorkspaceStack').style.display = "none"; 
-            
-            // Reconfigure the top summary boxes to serve as setup indicators
-            document.getElementById('labelStatLeft').innerText = "Initial Status";
-            document.getElementById('valStatLeft').innerText = "Drafting";
-            document.getElementById('labelStatMiddle').innerText = "Current Progress";
-            document.getElementById('valStatMiddle').innerText = "0%";
-            document.getElementById('labelStatRight').innerText = "Configuration";
-            document.getElementById('valStatRight').innerText = "Pending";
+    if (!goalID) {
+        alert('Goal ID not found.');
+        window.location.href = 'goals.html';
+        return;
+    }
 
-            // Expand the configuration settings form to occupy full width comfortably
-            document.getElementById('settingsPanelCard').classList.remove('settings-card-span');
-            document.getElementById('settingsPanelCard').style.gridColumn = "1 / -1";
-            document.getElementById('settingsCardTitle').innerText = "Configure Goal Parameters";
-
-            // Reset setup fields to empty/default states
-            document.getElementById('goalName').value = "";
-            document.getElementById('targetAmount').value = "";
-            document.getElementById('monthlyTarget').value = "";
-            document.getElementById('targetDate').value = "";
-
-            // Adjust form button text labels appropriately
-            document.getElementById('btnMainSettingsSubmit').innerText = "Create Goal Target";
-            document.getElementById('btnDangerSettingsAction').innerText = "Reset Fields";
-            document.getElementById('btnDangerSettingsAction').setAttribute("type", "reset");
-
-        } else {
-            // ==========================================
-            // STATE B: Load Pre-Existing Goal Data Dynamically
-            // ==========================================
-            const currentGoal = sampleGoalsDb[goalId] || sampleGoalsDb["china_trip"];
-
-            // Render Banner Content
-            document.getElementById('displayBannerEmoji').innerText = currentGoal.emoji;
-            document.getElementById('displayBannerTitle').innerText = currentGoal.title;
-            document.getElementById('displayBannerProgressPct').innerText = `${currentGoal.progress} complete`;
-            
-            const progressBarFill = document.getElementById('displayBannerProgressFill');
-            progressBarFill.style.width = currentGoal.progress;
-            progressBarFill.style.background = currentGoal.progressColor;
-
-            // Render Top Metric Blocks
-            document.getElementById('valStatLeft').innerText = currentGoal.saved;
-            document.getElementById('valStatMiddle').innerText = currentGoal.remain;
-            document.getElementById('valStatRight').innerText = currentGoal.needed;
-
-            // Load Historical Statement Rows
-            document.getElementById('historyLedgerContainer').innerHTML = currentGoal.history;
-
-            // Populate Form Configuration Inputs
-            document.getElementById('goalName').value = currentGoal.title;
-            document.getElementById('targetAmount').value = currentGoal.targetRaw;
-            document.getElementById('monthlyTarget').value = currentGoal.monthlyRaw;
-            document.getElementById('targetDate').value = currentGoal.dateRaw;
-        }
+    // Initialize Flatpickr for deposit date
+    flatpickr('#depDate', {
+        dateFormat: 'Y-m-d',
+        defaultDate: 'today'
     });
+
+    // Setup event listeners
+    setupEventListeners();
+
+    // Load goal data
+    if (goalID === 'new') {
+        setupNewGoalUI();
+    } else {
+        await loadGoalData();
+        
+        // If action=deposit, scroll to deposit form and focus amount input
+        if (action === 'deposit') {
+            setTimeout(() => {
+                const depositForm = document.getElementById('goalDepositForm');
+                if (depositForm) {
+                    depositForm.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('depAmount').focus();
+                }
+            }, 300); // Small delay to ensure DOM is ready
+        }
+    }
+});
+
+// ==========================================
+// Event Listeners Setup
+// ==========================================
+function setupEventListeners() {
+    // Deposit form submission
+    document.getElementById('goalDepositForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleDepositSubmit();
+    });
+
+    // Settings form submission (Save Changes)
+    document.getElementById('goalSettingsForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSaveChanges();
+    });
+
+    // Delete goal button
+    document.getElementById('btnDangerSettingsAction').addEventListener('click', () => {
+        handleDeleteGoal();
+    });
+}
+
+// ==========================================
+// New Goal Setup UI
+// ==========================================
+function setupNewGoalUI() {
+    document.getElementById('displayBannerEmoji').innerText = '✨';
+    document.getElementById('displayBannerTitle').innerText = 'Create New Saving Goal';
+    
+    // Hide progress tracking and history
+    document.getElementById('bannerProgressWrapper').style.display = 'none';
+    document.getElementById('leftWorkspaceStack').style.display = 'none';
+    
+    // Update summary cards
+    document.getElementById('labelStatLeft').innerText = 'Initial Status';
+    document.getElementById('valStatLeft').innerText = 'Drafting';
+    document.getElementById('labelStatMiddle').innerText = 'Current Progress';
+    document.getElementById('valStatMiddle').innerText = '0%';
+    document.getElementById('labelStatRight').innerText = 'Configuration';
+    document.getElementById('valStatRight').innerText = 'Pending';
+
+    // Expand settings form
+    document.getElementById('settingsPanelCard').classList.remove('settings-card-span');
+    document.getElementById('settingsPanelCard').style.gridColumn = '1 / -1';
+    document.getElementById('settingsCardTitle').innerText = 'Configure Goal Parameters';
+
+    // Clear form fields
+    document.getElementById('goalName').value = '';
+    document.getElementById('targetAmount').value = '';
+    document.getElementById('monthlyTarget').value = '';
+    document.getElementById('targetDate').value = '';
+
+    // Update button labels
+    document.getElementById('btnMainSettingsSubmit').innerText = 'Create Goal Target';
+    document.getElementById('btnDangerSettingsAction').innerText = 'Reset Fields';
+    document.getElementById('btnDangerSettingsAction').setAttribute('type', 'reset');
+}
+
+// ==========================================
+// Load Goal Data from API
+// ==========================================
+async function loadGoalData() {
+    try {
+        const response = await fetch(`/api/goals/${goalID}?userID=${userID}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        currentGoal = await response.json();
+        updateUIWithGoalData(currentGoal);
+    } catch (error) {
+        console.error('Error loading goal:', error);
+        alert(`Failed to load goal: ${error.message}`);
+        window.location.href = 'goals.html';
+    }
+}
+
+// ==========================================
+// Update UI with Goal Data
+// ==========================================
+function updateUIWithGoalData(goal) {
+    // Banner
+    document.getElementById('displayBannerTitle').innerText = goal.goalName;
+
+    // Progress bar
+    const progress = Math.min(goal.progressPercent, 100);
+    const progressBar = document.getElementById('displayBannerProgressFill');
+    progressBar.style.width = `${progress}%`;
+    progressBar.style.background = getProgressColor(progress);
+    
+    document.getElementById('displayBannerProgressPct').innerText = `${Math.round(progress)}% complete`;
+
+    // Summary cards
+    document.getElementById('valStatLeft').innerText = `$${formatCurrency(goal.currentSaved)}`;
+    document.getElementById('valStatMiddle').innerText = `$${formatCurrency(goal.remainingAmount)}`;
+    document.getElementById('labelStatRight').innerText = goal.monthlyTarget ? 'Monthly Target' : 'Target Amount';
+    document.getElementById('valStatRight').innerText = goal.monthlyTarget 
+        ? `$${formatCurrency(goal.monthlyTarget)}` 
+        : `$${formatCurrency(goal.goalAmount)}`;
+
+    // Form fields
+    document.getElementById('goalName').value = goal.goalName;
+    document.getElementById('targetAmount').value = goal.goalAmount;
+    document.getElementById('monthlyTarget').value = goal.monthlyTarget || '';
+    
+    // Format date for input (YYYY-MM-DD or display format)
+    const targetDate = new Date(goal.goalTargetDate);
+    document.getElementById('targetDate').value = formatDateForInput(targetDate);
+
+    // Update button labels
+    document.getElementById('btnMainSettingsSubmit').innerText = 'Save changes';
+    document.getElementById('btnDangerSettingsAction').innerText = goal.isCompleted ? 'Delete Goal' : 'Delete Goal';
+    document.getElementById('btnDangerSettingsAction').setAttribute('type', 'button');
+
+    // Add Mark as Complete button if not completed
+    if (!goal.isCompleted) {
+        addMarkCompleteButton();
+    } else {
+        document.querySelector('.form-double-actions-footer').innerHTML += `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 16px; background: #D1FAE5; border-radius: 8px; color: #047857; font-weight: 600;">
+                ✓ Goal Completed on ${new Date(goal.goalFinishedDate).toLocaleDateString()}
+            </div>
+        `;
+    }
+
+    // Load deposit history
+    loadDepositHistory(goal);
+}
+
+// ==========================================
+// Add Mark Complete Button
+// ==========================================
+function addMarkCompleteButton() {
+    const footerDiv = document.querySelector('.form-double-actions-footer');
+    const completeBtn = document.createElement('button');
+    completeBtn.type = 'button';
+    completeBtn.className = 'btn-primary-action';
+    completeBtn.style.gridColumn = '1 / -1';
+    completeBtn.style.background = '#10B981';
+    completeBtn.innerText = '✓ Mark as Complete';
+    completeBtn.addEventListener('click', handleMarkComplete);
+    footerDiv.appendChild(completeBtn);
+}
+
+// ==========================================
+// Handle Deposit Submit
+// ==========================================
+async function handleDepositSubmit() {
+    if (goalID === 'new') {
+        alert('Please create the goal first.');
+        return;
+    }
+
+    const depAmount = parseFloat(document.getElementById('depAmount').value);
+    const depDate = document.getElementById('depDate').value;
+
+    if (!depAmount || depAmount <= 0) {
+        alert('Please enter a valid deposit amount.');
+        return;
+    }
+
+    if (!depDate) {
+        alert('Please select a deposit date.');
+        return;
+    }
+
+    // Confirmation dialog
+    const goalName = currentGoal ? currentGoal.goalName : 'this goal';
+    const confirmed = confirm(`Deposit $${depAmount.toFixed(2)} on ${depDate} to ${goalName}?`);
+    
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`/api/goals/${goalID}/deposit?userID=${userID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: depAmount,
+                depositDate: depDate
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to add deposit');
+        }
+
+        const updatedGoal = await response.json();
+        currentGoal = updatedGoal;
+        updateUIWithGoalData(updatedGoal);
+        
+        // Reset form
+        document.getElementById('goalDepositForm').reset();
+        document.getElementById('depDate').valueAsDate = new Date();
+        flatpickr('#depDate', { dateFormat: 'Y-m-d', defaultDate: 'today' });
+        
+        alert('Deposit added successfully! ✓');
+    } catch (error) {
+        console.error('Error adding deposit:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// ==========================================
+// Handle Save Changes (PUT)
+// ==========================================
+async function handleSaveChanges() {
+    if (goalID === 'new') {
+        handleCreateGoal();
+        return;
+    }
+
+    const goalName = document.getElementById('goalName').value.trim();
+    const targetAmount = parseFloat(document.getElementById('targetAmount').value);
+    const monthlyTarget = parseFloat(document.getElementById('monthlyTarget').value) || null;
+    const targetDate = document.getElementById('targetDate').value;
+
+    if (!goalName || !targetAmount || !targetDate) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/goals/${goalID}?userID=${userID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                goalName,
+                goalAmount: targetAmount,
+                goalTargetDate: formatDateForAPI(targetDate),
+                monthlyTarget
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update goal');
+        }
+
+        const updatedGoal = await response.json();
+        currentGoal = updatedGoal;
+        updateUIWithGoalData(updatedGoal);
+        alert('Goal updated successfully! ✓');
+    } catch (error) {
+        console.error('Error saving changes:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// ==========================================
+// Handle Create Goal (POST)
+// ==========================================
+async function handleCreateGoal() {
+    const goalName = document.getElementById('goalName').value.trim();
+    const targetAmount = parseFloat(document.getElementById('targetAmount').value);
+    const monthlyTarget = parseFloat(document.getElementById('monthlyTarget').value) || null;
+    const targetDate = document.getElementById('targetDate').value;
+
+    if (!goalName || !targetAmount || !targetDate) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/goals?userID=${userID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                goalName,
+                goalAmount: targetAmount,
+                goalTargetDate: formatDateForAPI(targetDate),
+                monthlyTarget,
+                autoMonthly: false
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to create goal');
+        }
+
+        alert('Goal created successfully! ✓');
+        window.location.href = 'goals.html';
+    } catch (error) {
+        console.error('Error creating goal:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// ==========================================
+// Handle Mark as Complete (PATCH)
+// ==========================================
+async function handleMarkComplete() {
+    const confirmed = confirm(`Mark "${currentGoal.goalName}" as completed?`);
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`/api/goals/${goalID}/complete?userID=${userID}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to complete goal');
+        }
+
+        const result = await response.json();
+        
+        // Show completion message
+        let message = '🎉 Goal Completed!\n\n';
+        if (result.transferredAmount && result.transferredAmount > 0) {
+            message += `A SAVING transaction of $${formatCurrency(result.transferredAmount)} was created for the remaining balance.\n\n`;
+        }
+        message += result.message;
+        
+        alert(message);
+        
+        // Reload goal data
+        await loadGoalData();
+    } catch (error) {
+        console.error('Error completing goal:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// ==========================================
+// Handle Delete Goal (DELETE)
+// ==========================================
+async function handleDeleteGoal() {
+    const confirmed = confirm(`Are you sure you want to delete "${currentGoal ? currentGoal.goalName : 'this goal'}"? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`/api/goals/${goalID}?userID=${userID}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to delete goal');
+        }
+
+        alert('Goal deleted successfully. ✓');
+        window.location.href = 'goals.html';
+    } catch (error) {
+        console.error('Error deleting goal:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// ==========================================
+// Load Deposit History
+// ==========================================
+async function loadDepositHistory(goal) {
+    // Note: History is typically fetched from transaction query by goalID
+    // For now, we'll show a placeholder - backend can return transaction history
+    const historyContainer = document.getElementById('historyLedgerContainer');
+    
+    // The deposit history should be populated from transactions linked to this goal
+    // This is a placeholder that would be populated by the backend
+    if (!historyContainer.innerHTML.includes('ledger-row-item') && !goal.isCompleted) {
+        historyContainer.innerHTML = `
+            <div class="ledger-row-item">
+                <div class="item-left-cell"><p class="main-title">No deposits yet</p><p class="sub-date">Use the form above to add a deposit</p></div>
+                <div class="item-right-cell"><span class="green-tx">-</span></div>
+            </div>
+        `;
+    }
+}
+
+// ==========================================
+// Utility Functions
+// ==========================================
+function formatCurrency(value) {
+    if (!value) return '0.00';
+    return parseFloat(value).toFixed(2);
+}
+
+function formatDateForInput(date) {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function formatDateForAPI(dateString) {
+    // If already in YYYY-MM-DD format, return as-is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
+    }
+    // Otherwise try to parse and format
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        return dateString; // Return as-is if invalid
+    }
+    return formatDateForInput(date);
+}
+
+function getProgressColor(progress) {
+    if (progress < 33) return 'var(--red)';
+    if (progress < 66) return 'var(--blue)';
+    return 'var(--green)';
+}
 </script>
 </body>
 </html>

@@ -4,7 +4,6 @@ import com.budget.app.dto.BudgetRequestDTO;
 import com.budget.app.dto.BudgetSummaryDTO;
 import com.budget.app.model.Budget;
 import com.budget.app.service.BudgetService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,6 @@ public class BudgetController {
 
     private final BudgetService budgetService;
 
-    @Autowired
     public BudgetController(BudgetService budgetService) {
         this.budgetService = budgetService;
     }

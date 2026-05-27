@@ -1,10 +1,11 @@
 package com.budget.app.controller;
 
+import com.budget.app.dto.GoalCompleteResponseDTO;
+import com.budget.app.dto.GoalDepositRequestDTO;
 import com.budget.app.dto.GoalOverviewDTO;
 import com.budget.app.dto.GoalRequestDTO;
 import com.budget.app.dto.GoalResponseDTO;
 import com.budget.app.service.GoalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,8 @@ import java.util.List;
  *   GET    /api/goals/{goalID}?userID=                → GoalResponseDTO
  *   POST   /api/goals?userID=                         → GoalResponseDTO (201)
  *   PUT    /api/goals/{goalID}?userID=                → GoalResponseDTO
- *   PATCH  /api/goals/{goalID}/complete?userID=       → GoalResponseDTO (mark finished)
+ *   PATCH  /api/goals/{goalID}/complete?userID=       → GoalCompleteResponseDTO (mark finished, auto-transfer)
+ *   POST   /api/goals/{goalID}/deposit?userID=        → GoalResponseDTO (record deposit)
  *   DELETE /api/goals/{goalID}?userID=                → 204
  */
 @RestController
@@ -30,7 +32,6 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    @Autowired
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
@@ -82,10 +83,21 @@ public class GoalController {
     // ── Mark as complete ──────────────────────────────────────────────────────
 
     @PatchMapping("/{goalID}/complete")
-    public ResponseEntity<GoalResponseDTO> completeGoal(
+    public ResponseEntity<GoalCompleteResponseDTO> completeGoal(
             @PathVariable Long goalID,
             @RequestParam  Long userID) {
         return ResponseEntity.ok(goalService.completeGoal(goalID, userID));
+    }
+
+    // ── Deposit to goal ───────────────────────────────────────────────────────
+
+    @PostMapping("/{goalID}/deposit")
+    public ResponseEntity<GoalResponseDTO> depositToGoal(
+            @PathVariable Long goalID,
+            @RequestParam  Long userID,
+            @RequestBody   GoalDepositRequestDTO req) {
+        GoalResponseDTO result = goalService.depositToGoal(goalID, userID, req.getAmount(), req.getDepositDate());
+        return ResponseEntity.ok(result);
     }
 
     // ── Delete ────────────────────────────────────────────────────────────────

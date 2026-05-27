@@ -8,15 +8,17 @@ let transactions = [];
 
 // ── Initialize Dashboard on Page Load ──────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const userId = localStorage.getItem('userId');
+    // Check sessionStorage first, fall back to localStorage (remember me)
+    const stored = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
+    const userId = sessionStorage.getItem('userID') || localStorage.getItem('userID');
 
-    if (!isLoggedIn || !userId) {
+    if (!stored || !userId) {
         // Redirect to login if not logged in
         window.location.href = 'index.html';
         return;
     }
+
+    currentUser = JSON.parse(stored);
 
     // Load and display user info
     loadUserDashboard(userId);
@@ -25,11 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // ── Load User Dashboard Data ──────────────────────────────────
 async function loadUserDashboard(userId) {
     try {
-        const userName = localStorage.getItem('userName');
-        
+        // Build full name from the stored user object
+        const userName = currentUser
+            ? `${currentUser.userFirstName} ${currentUser.userLastName}`
+            : 'User';
+
         // Update greeting with user's name
         updateGreeting(userName);
-        
+
         // Update user avatar with initials
         updateAvatar(userName);
 
@@ -48,18 +53,18 @@ async function loadUserDashboard(userId) {
 function updateGreeting(userName) {
     const hour = new Date().getHours();
     let greeting = 'Good morning';
-    
+
     if (hour >= 12 && hour < 18) {
         greeting = 'Good afternoon';
     } else if (hour >= 18) {
         greeting = 'Good evening';
     }
 
-    document.getElementById('greetingTitle').textContent = 
+    document.getElementById('greetingTitle').textContent =
         `${greeting}, ${userName}! 👋`;
-    
+
     const monthYear = getMonthYear();
-    document.getElementById('greetingSub').textContent = 
+    document.getElementById('greetingSub').textContent =
         `${monthYear} overview`;
     document.getElementById('currentPeriod').textContent = monthYear;
 }
@@ -72,7 +77,7 @@ function updateAvatar(userName) {
         .join('')
         .toUpperCase()
         .substring(0, 2);
-    
+
     document.getElementById('userAvatar').textContent = initials;
 }
 
@@ -91,7 +96,7 @@ async function loadBudgets(userId) {
         }
 
         const budgets = await response.json();
-        
+
         if (!Array.isArray(budgets) || budgets.length === 0) {
             updateDashboardStats(0, 0, 0, 0);
             return;
@@ -124,7 +129,7 @@ async function loadTransactions(userId) {
         }
 
         const allTransactions = await response.json();
-        
+
         if (!Array.isArray(allTransactions)) {
             displayTransactions([]);
             return;
@@ -141,7 +146,7 @@ async function loadTransactions(userId) {
             return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
         });
 
-        transactions = currentMonthTransactions.sort((a, b) => 
+        transactions = currentMonthTransactions.sort((a, b) =>
             new Date(b.createdAt) - new Date(a.createdAt)
         ).slice(0, 10); // Show only last 10
 
@@ -151,7 +156,7 @@ async function loadTransactions(userId) {
 
         currentMonthTransactions.forEach(tx => {
             const amount = parseFloat(tx.amount) || 0;
-            
+
             if (tx.type === 'INCOME') {
                 totalIncome += amount;
             } else {
@@ -161,7 +166,7 @@ async function loadTransactions(userId) {
 
         const netSaving = totalIncome - totalSpend;
         const currentBalance = currentBudget ? currentBudget.amount : 0;
-        
+
         updateDashboardStats(currentBalance, totalIncome, totalSpend, netSaving);
         displayTransactions(transactions);
 
@@ -174,7 +179,7 @@ async function loadTransactions(userId) {
 // ── Display Transactions List ────────────────────────────────
 function displayTransactions(txList) {
     const container = document.getElementById('transactionsContainer');
-    
+
     if (!txList || txList.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No transactions yet</p>';
         return;
@@ -211,23 +216,23 @@ function displayTransactions(txList) {
 
 // ── Update Dashboard Stats Display ────────────────────────────
 function updateDashboardStats(balance, income, spend, savings) {
-    document.getElementById('totalBalance').textContent = 
+    document.getElementById('totalBalance').textContent =
         formatCurrency(balance);
-    document.getElementById('totalIncome').textContent = 
+    document.getElementById('totalIncome').textContent =
         formatCurrency(income);
-    document.getElementById('totalSpend').textContent = 
+    document.getElementById('totalSpend').textContent =
         formatCurrency(spend);
-    document.getElementById('netSaving').textContent = 
+    document.getElementById('netSaving').textContent =
         formatCurrency(savings);
 
     // Calculate spend percentage
     const spendPercentage = income > 0 ? ((spend / income) * 100).toFixed(1) : 0;
-    document.getElementById('spendPercentage').textContent = 
+    document.getElementById('spendPercentage').textContent =
         `${spendPercentage}% of income`;
 
     // Calculate balance change
     const balanceChange = balance > 0 ? '+' + (Math.random() * 20).toFixed(1) + '%' : '+0%';
-    document.getElementById('balanceChange').textContent = 
+    document.getElementById('balanceChange').textContent =
         `${balanceChange} vs last month`;
 }
 
@@ -286,7 +291,7 @@ async function handleSaveTransaction() {
 
         // Success - reload transactions
         closeModal();
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userID') || localStorage.getItem('userID');
         await loadTransactions(userId);
 
     } catch (error) {
@@ -364,7 +369,7 @@ async function handleCreateBudget() {
     }
 
     try {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userID') || localStorage.getItem('userID');
         const budgetData = {
             name: name,
             category: category,
@@ -385,7 +390,7 @@ async function handleCreateBudget() {
 
         const newBudget = await response.json();
         currentBudget = newBudget;
-        
+
         closeBudgetModal();
         await loadBudgets(userId);
 

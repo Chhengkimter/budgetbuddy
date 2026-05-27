@@ -3,7 +3,6 @@ package com.budget.app.controller;
 import com.budget.app.dto.RecurringTransactionRequestDTO;
 import com.budget.app.dto.RecurringTransactionResponseDTO;
 import com.budget.app.service.RecurringTransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,6 @@ public class RecurringTransactionController {
 
     private final RecurringTransactionService recurringService;
 
-    @Autowired
     public RecurringTransactionController(RecurringTransactionService recurringService) {
         this.recurringService = recurringService;
     }

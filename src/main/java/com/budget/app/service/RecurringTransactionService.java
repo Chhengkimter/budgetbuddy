@@ -8,7 +8,6 @@ import com.budget.app.model.RecurringTransaction;
 import com.budget.app.repository.BudgetRepository;
 import com.budget.app.repository.GoalRepository;
 import com.budget.app.repository.RecurringTransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +22,6 @@ public class RecurringTransactionService {
     private final BudgetRepository budgetRepo;
     private final GoalRepository goalRepo;
 
-    @Autowired
     public RecurringTransactionService(RecurringTransactionRepository recurringRepo,
                                        BudgetRepository budgetRepo,
                                        GoalRepository goalRepo) {

@@ -7,7 +7,6 @@ import com.budget.app.dto.BudgetSummaryDTO.SavingsGoal;
 import com.budget.app.model.Budget;
 import com.budget.app.repository.BudgetRepository;
 import com.budget.app.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,7 +28,6 @@ public class BudgetService {
     private final BudgetRepository      budgetRepo;
     private final TransactionRepository txRepo;
 
-    @Autowired
     public BudgetService(BudgetRepository budgetRepo, TransactionRepository txRepo) {
         this.budgetRepo = budgetRepo;
         this.txRepo     = txRepo;

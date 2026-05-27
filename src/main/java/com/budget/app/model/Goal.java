@@ -31,6 +31,17 @@ public class Goal {
     @Column(name = "GoalFinishedDate")
     private LocalDate goalFinishedDate;
 
+    @Column(name = "CurrentSaved", nullable = false, precision = 15, scale = 2)
+    private BigDecimal currentSaved = BigDecimal.ZERO;
+
+    @Column(name = "MonthlyTarget")
+    private BigDecimal monthlyTarget;
+
+    @Column(name = "IsCompleted", nullable = false)
+    private Boolean isCompleted = false;
+
+    @Column(name = "AutoMonthly", nullable = false)
+    private Boolean autoMonthly = false;
     public Goal() {}
 
     public Goal(Long userID, String goalName, BigDecimal goalAmount, LocalDate goalTargetDate) {
@@ -61,4 +72,16 @@ public class Goal {
 
     public LocalDate getGoalFinishedDate()              { return goalFinishedDate; }
     public void      setGoalFinishedDate(LocalDate d)   { this.goalFinishedDate = d; }
+
+    public BigDecimal getCurrentSaved()                 { return currentSaved; }
+    public void       setCurrentSaved(BigDecimal v)     { this.currentSaved = v; }
+
+    public BigDecimal getMonthlyTarget()                { return monthlyTarget; }
+    public void       setMonthlyTarget(BigDecimal v)    { this.monthlyTarget = v; }
+
+    public Boolean    getIsCompleted()                  { return isCompleted; }
+    public void       setIsCompleted(Boolean b)         { this.isCompleted = b; }
+
+    public Boolean    getAutoMonthly()                  { return autoMonthly; }
+    public void       setAutoMonthly(Boolean b)         { this.autoMonthly = b; }
 }

@@ -8,7 +8,6 @@ import com.budget.app.model.Transaction;
 import com.budget.app.repository.BudgetRepository;
 import com.budget.app.repository.GoalRepository;
 import com.budget.app.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,7 +23,6 @@ public class TransactionService {
     private final BudgetRepository      budgetRepo;
     private final GoalRepository        goalRepo;
 
-    @Autowired
     public TransactionService(TransactionRepository txRepo,
                               BudgetRepository budgetRepo,
                               GoalRepository goalRepo) {

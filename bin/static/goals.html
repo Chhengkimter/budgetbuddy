@@ -3,72 +3,424 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>BudDy — Saving Goals</title>
+    <title>Goals — BudgetBuddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
     <link rel="stylesheet" href="css/goals.css"/>
+    <!-- Flatpickr Calendar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
-        /* Top-Right header navigation controls alignment */
-        .monthly-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-        .monthly-nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #F3F4F6;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #E5E7EB;
-        }
-        .btn-month-arrow {
-            background: #ffffff;
-            border: 1px solid #E5E7EB;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 800;
-            padding: 2px 8px;
-            cursor: pointer;
-            color: #1F2937;
-            transition: all 0.15s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .btn-month-arrow:hover {
-            background: #F9FAFB;
-            border-color: #D1D5DB;
-        }
-        .nav-month-label-text {
-            font-size: 13px;
-            font-weight: 700;
-            color: #4B5563;
-            min-width: 90px;
-            text-align: center;
+        /* Summary Section */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
-        /* Linear Progress Trackers */
-        .monthly-progress-container {
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .summary-icon {
+            font-size: 32px;
+        }
+
+        .summary-content h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6B7280;
+            margin: 0 0 8px 0;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1F2937;
+            margin: 0;
+        }
+
+        /* Goals Grid */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .goal-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .goal-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #D1D5DB;
+        }
+
+        .goal-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .goal-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        .completed-badge {
+            background: #D1FAE5;
+            color: #047857;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .goal-amounts {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 12px;
+        }
+
+        .goal-amounts-value {
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .progress-bar {
             width: 100%;
             height: 8px;
-            background-color: #E5E7EB;
-            border-radius: 999px;
-            margin-top: 12px;
-            margin-bottom: 6px;
+            background: #E5E7EB;
+            border-radius: 4px;
             overflow: hidden;
+            margin-bottom: 12px;
         }
-        .monthly-progress-bar-fill {
+
+        .progress-fill {
             height: 100%;
-            width: 0%; 
-            background: #10B981; 
-            border-radius: 999px;
-            transition: width 0.3s ease-in-out;
+            background: #10B981;
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
-        
-        /* Interactive styling pointer */
-        .goal-interactive-card, .dashed-add-card {
+
+        .goal-details {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 16px;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-deposit {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-deposit:hover {
+            background: #059669;
+        }
+
+        .btn-view {
+            background: #F3F4F6;
+            color: #1F2937;
+            border: 1px solid #E5E7EB;
+        }
+
+        .btn-view:hover {
+            background: #E5E7EB;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-large {
+            max-width: 600px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6B7280;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #1F2937;
+        }
+
+        form {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            display: inline-block;
+            position: relative;
+        }
+
+        .toggle-switch input {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        .toggle-slider {
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+            background: #D1D5DB;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-slider::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: #10B981;
+        }
+
+        .toggle-switch input:checked + .toggle-slider::after {
+            left: 18px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #2563EB;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: #F3F4F6;
+            color: #1F2937;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F2937;
+            margin: 0;
+        }
+
+        .btn-add-top {
+            padding: 10px 20px;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-add-top:hover {
+            background: #2563EB;
+        }
+
+        .error-message {
+            background: #FEE2E2;
+            color: #991B1B;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #DCFCE7;
+            color: #15803D;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -85,7 +437,7 @@
                        s2.9-.879 4.006 0l.415.33"/>
             </svg>
         </div>
-        <span class="navbar__logo-name">Budget Buddy</span>
+        <span class="navbar__logo-name">BudgetBuddy</span>
     </div>
 
     <div class="navbar__links">
@@ -128,150 +480,149 @@
     </div>
 
     <div class="navbar__right">
-        <div id="liveTransactionDateDisplay" style="font-size: 22px; font-weight: 700; color: #6B7280;">Date: --/--/----</div>
-        <button class="btn-add" onclick="navigateToGoalDetails('new')">
+        <button class="btn-add" id="newGoalBtn">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            New goal 
+            New Goal
         </button>
-        <div class="navbar__avatar" onclick="window.location.href='settings.html'">MK</div>
+        <div class="navbar__avatar" onclick="window.location.href='settings.html'">👤</div>
     </div>
 </nav>
 
 <main class="page">
-    <div class="greeting">
-        <h2 class="greeting__title">Saving goals</h2>
-        <p class="greeting__sub">Save and track your financial targets</p>
+    <div class="page-header">
+        <div>
+            <h2>Savings Goals</h2>
+            <p style="color: #6B7280; margin-top: 4px;">Track and manage your financial targets</p>
+        </div>
     </div>
 
-    <div class="goals-master-grid">
-        
-        <div class="card stat-card">
-            <span class="goals-card-label">Total saved</span>
-            <div class="goals-card-amount text-green" id="displayTotalSaved">$8,940</div>
-            <div class="goals-card-sub">across all goals</div>
-        </div>
-        
-        <div class="card stat-card">
-            <div class="monthly-card-header">
-                <span class="goals-card-label">Monthly saving goal</span>
-                <div class="monthly-nav-controls">
-                    <button type="button" class="btn-month-arrow" onclick="adjustSelectedMonth(-1)">←</button>
-                    <span class="nav-month-label-text" id="activeMonthLabel">May 2026</span>
-                    <button type="button" class="btn-month-arrow" onclick="adjustSelectedMonth(1)">→</button>
-                </div>
-            </div>
-            
-            <div class="goals-card-amount text-dark" id="displayMonthlyTarget">$600</div>
-            
-            <div class="monthly-progress-container">
-                <div class="monthly-progress-bar-fill" id="monthlyGoalProgressBarFill"></div>
-            </div>
-            <div class="goals-card-sub" id="displayMonthlyDeposited">$450 deposited this month</div>
-        </div>
-
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('retirement')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">🏦</span>
-                <span class="goal-name">Retirement Fund</span>
-            </div>
-            <div class="goal-amounts-label">$3,000 / $30,000</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 10%; background: var(--primary);"></div>
-            </div>
-            <div class="goal-card-footer-text">$1,500 per 2026</div>
-        </div>
-
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('dress')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">👗</span>
-                <span class="goal-name">New Dress</span>
-            </div>
-            <div class="goal-amounts-label">$78 / $100</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 78%; background: var(--green);"></div>
-            </div>
-            <div class="goal-card-footer-text text-green">Almost there!</div>
-        </div>
-
-        <div class="card goal-interactive-card" onclick="navigateToGoalDetails('china_trip')">
-            <div class="goal-title-row">
-                <span class="goal-emoji">✈️</span>
-                <span class="goal-name">Trip to China</span>
-            </div>
-            <div class="goal-amounts-label">$1,080 / $1,500</div>
-            <div class="progress-container">
-                <div class="progress-bar-fill" style="width: 72%; background: var(--blue);"></div>
-            </div>
-            <div class="goal-card-footer-text">$210/mo needed</div>
-        </div>
-
-        <div class="card goal-interactive-card dashed-add-card" onclick="navigateToGoalDetails('new')">
-            <div class="add-inner-element">
-                <div class="plus-icon-symbol">+</div>
-                <div class="desc-text">Add new goal</div>
+    <!-- Summary Section -->
+    <div class="summary-section">
+        <div class="summary-card">
+            <div class="summary-icon">🎯</div>
+            <div class="summary-content">
+                <h3>Total Goals</h3>
+                <p class="summary-value" id="totalGoals">0</p>
             </div>
         </div>
-
+        <div class="summary-card">
+            <div class="summary-icon">💾</div>
+            <div class="summary-content">
+                <h3>Total Saved</h3>
+                <p class="summary-value" id="totalSaved">$0.00</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon">📊</div>
+            <div class="summary-content">
+                <h3>Total Remaining</h3>
+                <p class="summary-value" id="totalRemaining">$0.00</p>
+            </div>
+        </div>
     </div>
 
-    <p class="bottom-helper-caption-text">Click any goal to view details and deposit →</p>
+    <!-- Goals Grid -->
+    <div class="goals-grid" id="goalsGrid">
+        <!-- Goals will be loaded here dynamically -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <h3>No goals yet</h3>
+        <p>Create your first savings goal to get started!</p>
+        <button class="btn-primary" id="emptyStateBtn" style="width: 200px;">+ Create Goal</button>
+    </div>
 </main>
 
-<script>
-    let currentActiveDate = new Date(2026, 4, 1); 
+<!-- New Goal Modal -->
+<div class="modal" id="newGoalModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create New Goal</h2>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <form id="goalForm">
+            <div id="formMessage"></div>
+            <div class="form-group">
+                <label for="goalName">Goal Name *</label>
+                <input type="text" id="goalName" name="goalName" placeholder="e.g., Vacation Fund" required>
+            </div>
 
-    // Helper to send the unique ID in the URL to goal_details.html
-    function navigateToGoalDetails(goalId) {
-        window.location.href = `goal_details.html?id=${goalId}`;
-    }
+            <div class="form-group">
+                <label for="targetAmount">Target Amount ($) *</label>
+                <input type="number" id="targetAmount" name="targetAmount" placeholder="5000.00" step="0.01" min="0.01" required>
+            </div>
 
-    // ==========================================
-    // DATA GRABBER (For Monthly Card Controls Syncing)
-    // ==========================================
-    async function fetchGoalDataFromDatabase(year, month) {
-        try {
-            const lookupKey = `${year}-${String(month).padStart(2, '0')}`;
-            const localMockDatabase = {
-                "2026-04": { totalSaved: "$8,490", targetText: "$500", depositedText: "$500 deposited this month", targetVal: 500, depositedVal: 500 },
-                "2026-05": { totalSaved: "$8,940", targetText: "$600", depositedText: "$450 deposited this month", targetVal: 600, depositedVal: 450 },
-                "2026-06": { totalSaved: "$9,340", targetText: "$700", depositedText: "$0 deposited this month", targetVal: 700, depositedVal: 0 }
-            };
-            return localMockDatabase[lookupKey] || { totalSaved: "$8,940", targetText: "$600", depositedText: "$0 deposited this month", targetVal: 600, depositedVal: 0 };
-        } catch (error) {
-            console.error("Database tracking issues:", error);
-        }
-    }
+            <div class="form-group">
+                <label for="targetDate">Target Date *</label>
+                <input type="text" id="targetDate" name="targetDate" placeholder="Select date" required>
+            </div>
 
-    async function renderGoalsInterface() {
-        const activeYear = currentActiveDate.getFullYear();
-        const activeMonthInt = currentActiveDate.getMonth() + 1;
+            <div class="form-group">
+                <label for="monthlyTarget">Monthly Target Amount ($) (Optional)</label>
+                <input type="number" id="monthlyTarget" name="monthlyTarget" placeholder="500.00" step="0.01" min="0">
+            </div>
 
-        const data = await fetchGoalDataFromDatabase(activeYear, activeMonthInt);
-        const textFormattedMonth = currentActiveDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            <div class="form-group checkbox-group">
+                <label for="autoMonthly">
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="autoMonthly" name="autoMonthly">
+                        <span class="toggle-slider"></span>
+                    </div>
+                    <span>Enable monthly auto-deposit reminder</span>
+                </label>
+            </div>
 
-        document.getElementById('activeMonthLabel').innerText = textFormattedMonth;
-        document.getElementById('liveTransactionDateDisplay').innerText = "Date: " + textFormattedMonth;
-        document.getElementById('displayTotalSaved').innerText = data.totalSaved;
-        document.getElementById('displayMonthlyTarget').innerText = data.targetText;
-        document.getElementById('displayMonthlyDeposited').innerText = data.depositedText;
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                <button type="submit" class="btn-primary">Create Goal</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-        let progressPercent = 0;
-        if (data.targetVal > 0) {
-            progressPercent = Math.min((data.depositedVal / data.targetVal) * 100, 100);
-        }
-        document.getElementById('monthlyGoalProgressBarFill').style.width = `${progressPercent}%`;
-    }
+<!-- Deposit Modal -->
+<div class="modal" id="depositModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Deposit</h2>
+            <button class="modal-close" id="closeDepositModal">&times;</button>
+        </div>
+        <form id="depositForm">
+            <div id="depositFormMessage"></div>
+            <div class="form-group">
+                <label for="depositAmount">Deposit Amount ($) *</label>
+                <input type="number" id="depositAmount" name="depositAmount" placeholder="100.00" step="0.01" min="0.01" required>
+            </div>
 
-    function adjustSelectedMonth(directionStep) {
-        currentActiveDate.setMonth(currentActiveDate.getMonth() + directionStep);
-        renderGoalsInterface();
-    }
+            <div class="form-group">
+                <label for="depositDate">Deposit Date</label>
+                <input type="text" id="depositDate" name="depositDate" placeholder="Today">
+            </div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-        renderGoalsInterface();
-    });
-</script>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="cancelDepositBtn">Cancel</button>
+                <button type="submit" class="btn-primary">Add Deposit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Goal Details Modal -->
+<div class="modal" id="detailsModal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 id="detailsTitle">Goal Details</h2>
+            <button class="modal-close" id="closeDetailsModal">&times;</button>
+        </div>
+        <div id="detailsContent" style="padding: 20px;">
+            <!-- Goal details will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<script src="js/goals.js"></script>
 </body>
 </html>
