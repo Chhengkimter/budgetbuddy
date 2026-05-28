@@ -161,7 +161,7 @@ Visit: **http://localhost:8080**
 ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/budgeting_db?serverTimezone=UTC&useSSL=false
    spring.datasource.username=root
-   spring.datasource.password=YOUR_PASSWORD_HERE
+   spring.datasource.passwordYOUR_PASSWORD_HERE
 ```
 
 4. Run the Spring Boot application — the database is ready.
